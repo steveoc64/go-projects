@@ -7,14 +7,13 @@ func gradient(YaxisX, YaxisY, NullPoint1, NullPoint2 float64) float64 {
 }
 
 func main() {
-	fmt.Println("Enter points (x, y) from graph to get quadratic equation!")
+	var YaxisX, YaxisY, NullPoint1, NullPoint2 float64
+	fmt.Println("Enter a couple values from graph to get quadratic equation!")
 
-	var YaxisX, YaxisY float64
-	fmt.Print("Enter point where line goes through y-axis: ")
+	fmt.Print("\nEnter point where line goes through y-axis (x, y): ")
 	fmt.Scanf("(%v, %v)", &YaxisX, &YaxisY)
 
-	var NullPoint1, NullPoint2 float64
-	fmt.Println("\nEnter x-values for points where y = 0")
+	fmt.Println("\nEnter x-values for points where y-value is zero:")
 	fmt.Print("First x-value: ")
 	fmt.Scan(&NullPoint1)
 
