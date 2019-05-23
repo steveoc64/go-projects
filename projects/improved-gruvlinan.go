@@ -7,33 +7,33 @@ import (
 )
 
 // Beräkna arean för tråden från matematiska formeln.
-func threadArea(D float64) float64 {
-	return (math.Pi * math.Pow(D, 2)) / 4
+func threadArea(ThreadDiameter float64) float64 {
+	return (math.Pi * math.Pow(ThreadDiameter, 2)) / 4
 }
 
 // Beräkna trådens vikt utifrån matematiska formeln för vikt.
-func threadMass(D, ρ, L float64) float64 {
-	return (threadArea(D) / 1000000) * ρ * (L / 1000)
+func threadMass(ThreadMass, Dencity, Length float64) float64 {
+	return (threadArea(ThreadMass) / 1000000) * Dencity * (Length / 1000)
 }
 
 // Beräkning av trådens tillåtna spänning.
-func allowedThreadStrenght(σTill, A, g, ThreadMass float64) float64 {
-	return ((σTill * A) / g) - ThreadMass
+func allowedThreadStrenght(AllowedThreadStrength, ThreadArea, GravityConstant, ThreadMass float64) float64 {
+	return ((AllowedThreadStrength * ThreadArea) / GravityConstant) - ThreadMass
 }
 
 // Beräkning av trådens sträckgräns.
-func threadYieldStength(σS, A, g, ThreadMass float64) float64 {
-	return ((σS * A) / g) - ThreadMass
+func threadYieldStength(ThreadYieldStength, ThreadArea, GravityConstant, ThreadMass float64) float64 {
+	return ((ThreadYieldStength * ThreadArea) / GravityConstant) - ThreadMass
 }
 
 // Beräkning av trådens brottgräns.
-func threadTensileStrength(σB, A, g, ThreadMass float64) float64 {
-	return ((σB * A) / g) - ThreadMass
+func threadTensileStrength(ThreadTensileStrength, ThreadArea, GravityConstant, ThreadMass float64) float64 {
+	return ((ThreadTensileStrength * ThreadArea) / GravityConstant) - ThreadMass
 }
 
 // Antal trådar som krävs för att lyfta vikten.
-func requiredThreads(load, ThreadStrengthValue float64) float64 {
-	return math.Ceil(load / ThreadStrengthValue)
+func requiredThreads(Load, ThreadStrengthValue float64) float64 {
+	return math.Ceil(Load / ThreadStrengthValue)
 }
 
 // Vikten för hela vajern.
