@@ -36,16 +36,6 @@ func requiredThreads(Load, ThreadStrengthValue float64) float64 {
 	return math.Ceil(Load / ThreadStrengthValue)
 }
 
-// Vikten för hela vajern.
-func wireMass(RequiredThreads, ThreadMass float64) float64 {
-	return RequiredThreads * ThreadMass
-}
-
-// Totala arean för vajern.
-func wireArea(ThreadArea, RequiredThreads float64) float64 {
-	return ThreadArea * RequiredThreads
-}
-
 // Beräkning av diameter på vajern utifrån arean.
 func wireDiameter(WireArea float64) float64 {
 	return math.Sqrt((WireArea * 4) / math.Pi)
@@ -160,8 +150,8 @@ func main() {
 	fmt.Println("Trådar som krävs:", RequiredThreads, "st")
 
 	// Konvertera vikt, area och diameter från tråden över till hela vajern med hjälp av antalet trådar som krävs och funktionerna ovan.
-	WireMass := wireMass(RequiredThreads, ThreadMass)
-	WireArea := wireArea(ThreadArea, RequiredThreads)
+	WireMass := RequiredThreads * ThreadMass
+	WireArea := ThreadArea * RequiredThreads
 	WireDiameter := wireDiameter(WireArea)
 
 	// Skriv ut hela vajerns vikt.
