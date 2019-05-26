@@ -115,14 +115,14 @@ func main() {
 	fmt.Scanln(&material)
 
 	// Skapa ett val av material där materialets egenskaper kopieras till choice.
-	var choice Material
+	var choice *Material
 	switch material {
 	case "titan":
-		choice = titan
+		choice = &titan
 	case "cfrp":
-		choice = cfrp
+		choice = &cfrp
 	case "nylon":
-		choice = nylon
+		choice = &nylon
 	default:
 		fmt.Println("Error: Inte ett giltigt material!")
 		os.Exit(2)
