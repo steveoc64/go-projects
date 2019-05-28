@@ -21,8 +21,8 @@ func main() {
 	// When user presses enter, a new time is taken and then we calculate the time between those points.
 	fmt.Scanln()
 	end := time.Now()
-	elapsed := end.Sub(start) / 1000000 //Convert nanoseconds to milliseconds
+	elapsed := end.Sub(start)
 
-	fmt.Printf("Your reaction time is %d milliseconds!\n", elapsed)
+	fmt.Print("Your reaction time is: ", elapsed)
 
 }
