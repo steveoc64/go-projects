@@ -3,7 +3,14 @@ package main
 import (
 	"fmt"
 	"math"
-	"os"
+)
+
+// Konstanter för användning i beräkningarna.
+const (
+	Load         = 2000    //kg
+	Length       = 1000000 //mm
+	Gravity      = 9.82    //m/s²
+	SafetyFactor = 2
 )
 
 // Beräkna arean för tråden från matematiska formeln.
@@ -12,27 +19,27 @@ func threadArea(ThreadDiameter float64) float64 {
 }
 
 // Beräkna trådens vikt utifrån matematiska formeln för vikt.
-func threadMass(ThreadMass, Dencity, Length float64) float64 {
+func threadMass(ThreadMass, Dencity float64) float64 {
 	return (threadArea(ThreadMass) / 1000000) * Dencity * (Length / 1000)
 }
 
 // Beräkning av trådens tillåtna spänning.
-func allowedThreadStrenght(AllowedThreadStrength, ThreadArea, Gravity, ThreadMass float64) float64 {
+func allowedThreadStrenght(AllowedThreadStrength, ThreadArea, ThreadMass float64) float64 {
 	return ((AllowedThreadStrength * ThreadArea) / Gravity) - ThreadMass
 }
 
 // Beräkning av trådens sträckgräns.
-func threadYieldStength(ThreadYieldStength, ThreadArea, Gravity, ThreadMass float64) float64 {
+func threadYieldStength(ThreadYieldStength, ThreadArea, ThreadMass float64) float64 {
 	return ((ThreadYieldStength * ThreadArea) / Gravity) - ThreadMass
 }
 
 // Beräkning av trådens brottgräns.
-func threadTensileStrength(ThreadTensileStrength, ThreadArea, GravityConstant, ThreadMass float64) float64 {
-	return ((ThreadTensileStrength * ThreadArea) / GravityConstant) - ThreadMass
+func threadTensileStrength(ThreadTensileStrength, ThreadArea, ThreadMass float64) float64 {
+	return ((ThreadTensileStrength * ThreadArea) / Gravity) - ThreadMass
 }
 
 // Antal trådar som krävs för att lyfta vikten.
-func requiredThreads(Load, ThreadStrengthValue float64) float64 {
+func requiredThreads(ThreadStrengthValue float64) float64 {
 	return math.Ceil(Load / ThreadStrengthValue)
 }
 
@@ -42,7 +49,7 @@ func wireDiameter(WireArea float64) float64 {
 }
 
 // Totala förlängningen vid belastning.
-func totalExtension(WireMass, WireArea, Gravity, Length, Load, Elasticity float64) float64 {
+func totalExtension(WireMass, WireArea, Elasticity float64) float64 {
 
 	// Tyngden för vajern och belastningen.
 	Q := WireMass * Gravity
@@ -56,7 +63,7 @@ func totalExtension(WireMass, WireArea, Gravity, Length, Load, Elasticity float6
 }
 
 // Längden på trumman när man rullar upp vajern i ett lager.
-func spoolLength(SpoolDiameter, WireDiameter, Length, TotalExtension float64) float64 {
+func spoolLength(SpoolDiameter, WireDiameter, TotalExtension float64) float64 {
 	LengthExtended := Length + TotalExtension
 
 	// Diametern på trumman plus diametern på vajern för att få mitten av vajern på varje sida.
@@ -70,7 +77,7 @@ func spoolLength(SpoolDiameter, WireDiameter, Length, TotalExtension float64) fl
 }
 
 // Längden på trumman när man rullar upp vajern i tre lager.
-func threeLapsSpoolLength(SpoolDiameter, WireDiameter, Length, TotalExtension float64) float64 {
+func threeLapsSpoolLength(SpoolDiameter, WireDiameter, TotalExtension float64) float64 {
 	LengthExtended := Length + TotalExtension
 
 	// Totala diameternara för varje varv upp till tre, varje varv ska vara två * radien av vajern större för add få mittpunkten av vajer då den är lika stor vid böjning.
@@ -85,7 +92,7 @@ func threeLapsSpoolLength(SpoolDiameter, WireDiameter, Length, TotalExtension fl
 	return Laps * WireDiameter
 }
 
-// Definiera typen Material och egenskaperna för den.
+// Material innehåller fält för alla egenskaper för materialet.
 type Material struct {
 	Elasticity      float64 //N/mm²
 	Dencity         float64 //kg/m3
@@ -96,13 +103,6 @@ type Material struct {
 }
 
 func main() {
-	// Konstanter för användning i beräkningarna.
-	const (
-		Load         = 2000    //kg
-		Length       = 1000000 //mm
-		Gravity      = 9.82    //m/s²
-		SafetyFactor = 2
-	)
 
 	var material string
 
@@ -125,25 +125,25 @@ func main() {
 		choice = &nylon
 	default:
 		fmt.Println("Error: Inte ett giltigt material!")
-		os.Exit(2)
+		return
 	}
 
 	// Beräkning av tillåten spänning samt definiering av trådens area och vikt.
 	σTill := choice.YieldStrength / SafetyFactor
 	ThreadArea := threadArea(choice.ThreadDiameter)
-	ThreadMass := threadMass(choice.ThreadDiameter, choice.Dencity, Length)
+	ThreadMass := threadMass(choice.ThreadDiameter, choice.Dencity)
 
 	// Skriv ut säkerhetsfaktorn och tråddiametern.
 	fmt.Println("\nSäkerhetsfaktor:", SafetyFactor)
 	fmt.Println("Diameter på lös tråd:", choice.ThreadDiameter, "mm")
 
 	// Definiering av variabler för tillåten styrka, sträckgräns och brottgräns utifrån funktionerna.
-	AllowedThreadStrength := allowedThreadStrenght(σTill, ThreadArea, Gravity, ThreadMass)
-	ThreadYieldStength := threadYieldStength(choice.YieldStrength, ThreadArea, Gravity, ThreadMass)
-	ThreadTensileStrength := threadTensileStrength(choice.TensileStrength, ThreadArea, Gravity, ThreadMass)
+	AllowedThreadStrength := allowedThreadStrenght(σTill, ThreadArea, ThreadMass)
+	ThreadYieldStength := threadYieldStength(choice.YieldStrength, ThreadArea, ThreadMass)
+	ThreadTensileStrength := threadTensileStrength(choice.TensileStrength, ThreadArea, ThreadMass)
 
 	// Definiering av variabel för antalet trådar utifrån funktionen.
-	RequiredThreads := requiredThreads(Load, AllowedThreadStrength)
+	RequiredThreads := requiredThreads(AllowedThreadStrength)
 
 	// Skriv ut belastningsvikten och antalet trådar som krävs
 	fmt.Println("\nBelastningsvikt:", Load)
@@ -168,7 +168,7 @@ func main() {
 	fmt.Printf("Teoretisk brottgräns: %.2f kg\n", WireStrengthTensile)
 
 	// Definiera totala förlängningen och skriv ut den.
-	TotalExtension := totalExtension(WireMass, WireArea, Gravity, Length, Load, choice.Elasticity)
+	TotalExtension := totalExtension(WireMass, WireArea, choice.Elasticity)
 	fmt.Printf("\nTotal förlängning: %.2f mm\n", TotalExtension)
 
 	// Beräkna procentuella förlängningen.
@@ -176,10 +176,10 @@ func main() {
 	fmt.Printf("Procentuell förlängning: %.5f%%\n", Epsilon)
 
 	// Definiering av längen av trumman vid ett varv och tre varv samt utskrift av svaren, inklusive trummans diameter.
-	SpoolLength := spoolLength(choice.SpoolDiameter, WireDiameter, Length, TotalExtension)
-	ThreeLapsSpoolLength := threeLapsSpoolLength(choice.SpoolDiameter, WireDiameter, Length, TotalExtension)
+	SpoolLength := spoolLength(choice.SpoolDiameter, WireDiameter, TotalExtension)
+	ThreeLapsSpoolLength := threeLapsSpoolLength(choice.SpoolDiameter, WireDiameter, TotalExtension)
 	fmt.Printf("\nDiameter på trumman: %.2f mm\n", choice.SpoolDiameter)
 	fmt.Printf("Längd på trumman (ett lager): %.2f mm\n", SpoolLength)
-	fmt.Printf("Längd på trumman (tre lager): %.2f mm", ThreeLapsSpoolLength)
+	fmt.Printf("Längd på trumman (tre lager): %.2f mm\n", ThreeLapsSpoolLength)
 
 }
