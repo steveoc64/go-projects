@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 // Calculates the values of equation from points on the line
-func LineEquation(Point1X, Point1Y, Point2X, Point2Y float64) (Gradient, Intercept float64) {
+func lineEquation(Point1X, Point1Y, Point2X, Point2Y float64) (Gradient, Intercept float64) {
 	Gradient = (Point2Y - Point1Y) / (Point2X - Point1X)
 	Intercept = Point1Y - (Gradient * Point1X)
 	return Gradient, Intercept
@@ -22,7 +22,7 @@ func main() {
 	fmt.Scanf("(%v, %v)", &Point2X, &Point2Y)
 
 	// Output values from function to respectiv variables
-	Gradient, Intercept := LineEquation(Point1X, Point1Y, Point2X, Point2Y)
+	Gradient, Intercept := lineEquation(Point1X, Point1Y, Point2X, Point2Y)
 
 	// Get it to not print a + before a negative number
 	fmt.Println("\nYou equation is:")
