@@ -15,7 +15,7 @@ func main() {
 
 	// Enter the first point from the line
 	fmt.Print("\nEnter first point (x, y): ")
-	fmt.Scanf("(%v, %v)", &Point1X, &Point1Y)
+	fmt.Scanf("(%v, %v)\n", &Point1X, &Point1Y)
 
 	// Enter the second point on the line
 	fmt.Print("Enter second point (x, y): ")
