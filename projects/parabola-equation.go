@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"log"
 )
 
 // Calculate the values for A, B and C from spcific points on graph
@@ -23,11 +23,9 @@ func equationRoots(NullPoints int) (NullPoint1, NullPoint2 float64) {
 		// The point is called a rebound point and two root points will have the same value
 		NullPoint2 = NullPoint1
 	case 0:
-		fmt.Println("The function has no real roots and can't be parsed by this program!")
-		os.Exit(2)
+		log.Fatalln("The function has no real roots and can't be parsed by this program!")
 	default:
-		fmt.Println("A quadratic function can only have 2, 1 or 0 roots!")
-		os.Exit(2)
+		log.Fatalln("A quadratic function can only have 2, 1 or 0 roots!")
 	}
 
 	return NullPoint1, NullPoint2
