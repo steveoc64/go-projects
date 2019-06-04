@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"log"
 )
 
 func betygsPoäng(bokstav string) (poäng float64) {
@@ -19,8 +19,7 @@ func betygsPoäng(bokstav string) (poäng float64) {
 	case "E":
 		poäng = 10
 	default:
-		fmt.Println("Inte ett giltigt betyg!")
-		os.Exit(2)
+		log.Fatalln("Inte ett giltigt betyg!")
 	}
 
 	return poäng
@@ -52,8 +51,7 @@ func main() {
 	fmt.Scanln(&extra)
 
 	if extra < 0 || extra > 2.5 {
-		fmt.Println("Inte ett giltigt antal extramerit!")
-		os.Exit(2)
+		log.Fatalln("Inte ett giltigt antal extramerit!")
 	}
 
 	fmt.Printf("Meritpoäng: %.2f", merit(betyg, extra))
