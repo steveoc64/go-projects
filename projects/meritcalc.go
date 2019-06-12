@@ -18,6 +18,8 @@ func betygsPoäng(bokstav string) (poäng float64) {
 		poäng = 12.5
 	case "E":
 		poäng = 10
+	case "F":
+		poäng = 0
 	default:
 		log.Fatalln("Inte ett giltigt betyg!")
 	}
