@@ -6,25 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
-	"runtime"
 	"time"
 )
 
-func checkOS() {
-	if runtime.GOOS != "linux" {
-		log.Fatalf("%s is not a supported operatingsystem. Use Linux instead!\n", runtime.GOOS)
-	}
-}
-
-func clearDiary() {
-	cmd := exec.Command("/bin/bash", "-c", "cat /dev/null > diary.txt")
-	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func writeToDiary(i int, output string) {
+func writeToDiary(output string) {
 	file, err := os.Create("diary.txt")
 	if err != nil {
 		log.Fatal("Could not create file")
@@ -47,7 +32,6 @@ func readFromDiary(input string) string {
 }
 
 func main() {
-	checkOS()
 	fmt.Println("The book is opening...")
 
 	const passes = 4
@@ -68,10 +52,10 @@ func main() {
 		fmt.Println("Pass number:", i+1)
 
 		fmt.Println("Writing to diary...")
-		writeToDiary(i, OutputText[i])
+		writeToDiary(OutputText[i])
 		time.Sleep(5 * time.Second)
 
-		clearDiary()
+		writeToDiary("")
 		fmt.Println("Waiting for input...")
 
 		time.Sleep(15 * time.Second)
