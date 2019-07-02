@@ -9,6 +9,22 @@ import (
 	"time"
 )
 
+const passes = 4
+
+var output = [passes]string{
+	"Hello and welcome to my diary!\nDo you want to hear a story?",
+	"Wonderful!\nOnce up on a time I was a student at Hogwarts, and I wrote down my thoughts in this diary.\nNow I pass it along to you. Are you ready?",
+	"Well then, let us begin!\nMy name is Tom Riddle and you have found my diary.\nYou will help me get revenge! What do you think of that?",
+	"I'm afraid that you don't have a choice, my dear.\nYou will help me kill Harry Potter!",
+}
+
+var input = [passes]string{
+	"Yes",
+	"Yes, of course I am",
+	"I don't wanna help you!",
+	"I will obey",
+}
+
 func writeToDiary(output string) {
 	file, err := os.Create("diary.txt")
 	if err != nil {
@@ -34,34 +50,20 @@ func readFromDiary(input string) string {
 func main() {
 	fmt.Println("The book is opening...")
 
-	const passes = 4
-	OutputText := [passes]string{
-		"Hello and welcome to my diary!\nDo you want to hear a story?",
-		"Wonderful!\nOnce up on a time I was a student at Hogwarts, and I wrote down my thoughts in this diary.\nNow I pass it along to you. Are you ready?",
-		"Well then, let us begin!\nMy name is Tom Riddle and you have found my diary.\nYou will help me get revenge! What do you think of that?",
-		"I'm afraid that you don't have a choice, my dear.\nYou will help me kill Harry Potter!",
-	}
-	InputText := [passes]string{
-		"Yes",
-		"Yes, of course I am",
-		"I don't wanna help you!",
-		"I will obey",
-	}
-
 	for i := 0; i < passes; i++ {
 		fmt.Println("Pass number:", i+1)
 
 		fmt.Println("Writing to diary...")
-		writeToDiary(OutputText[i])
+		writeToDiary(output[i])
 		time.Sleep(5 * time.Second)
 
 		writeToDiary("")
 		fmt.Println("Waiting for input...")
 
 		time.Sleep(15 * time.Second)
-		data := readFromDiary(InputText[i])
+		data := readFromDiary(input[i])
 
-		if InputText[i] == data {
+		if input[i] == data {
 			continue
 		} else {
 			log.Fatal("Invalid answer")
