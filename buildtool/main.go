@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"path"
 )
 
 // Use PGO by compiling with -fprofile-generate, running and than recompiling with -fprofile-use and -profile-correction
