@@ -1,0 +1,18 @@
+# You may edit this file as a form and materials can be added more times than one!
+<?xml version="1.0" encoding="UTF-8"?>
+<materials>
+  <material>
+    <name></name>
+    <properties>
+      <elasticity></elasticity>
+      <dencity></dencity>
+      <yieldstrength></yieldstrength>
+      <tensilestrength></tensilestrength>
+      <load></load>
+      <threaddiameter></threaddiameter>
+      <spooldiameter></spooldiameter>
+      <wirelength></wirelength>
+      <safetyfactor></safetyfactor>
+    </properties>
+  </material>
+</materials>
