@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materials>
+  <material>
+    <name>Titan</name>
+    <properties>
+      <elasticity>105000</elasticity>
+      <dencity>4600</dencity>
+      <yieldstrength>747.5</yieldstrength>
+      <tensilestrength>962.5</tensilestrength>
+      <load>2000</load>
+      <threaddiameter>2.5</threaddiameter>
+      <spooldiameter>500</spooldiameter>
+      <wirelength>1000000</wirelength>
+      <safetyfactor>2</safetyfactor>
+    </properties>
+  </material>
+  <material>
+    <name>Cfrp</name>
+    <properties>
+      <elasticity>107000</elasticity>
+      <dencity>1550</dencity>
+      <yieldstrength>800</yieldstrength>
+      <tensilestrength>800</tensilestrength>
+      <load>2000</load>
+      <threaddiameter>2.5</threaddiameter>
+      <spooldiameter>500</spooldiameter>
+      <wirelength>1000000</wirelength>
+      <safetyfactor>2</safetyfactor>
+    </properties>
+  </material>
+  <material>
+    <name>Nylon</name>
+    <properties>
+      <elasticity>29100</elasticity>
+      <dencity>1130</dencity>
+      <yieldstrength>72.4</yieldstrength>
+      <tensilestrength>127.5</tensilestrength>
+      <load>2000</load>
+      <threaddiameter>5</threaddiameter>
+      <spooldiameter>2000</spooldiameter>
+      <wirelength>1000000</wirelength>
+      <safetyfactor>2</safetyfactor>
+    </properties>
+  </material>
+</materials>
