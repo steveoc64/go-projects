@@ -39,8 +39,8 @@ func parse() Materials {
 	}
 
 	byteValue, _ := ioutil.ReadAll(file)
-	var materials Materials
-	xml.Unmarshal(byteValue, &materials)
+	var data Materials
+	xml.Unmarshal(byteValue, &data)
 
-	return materials
+	return data
 }
