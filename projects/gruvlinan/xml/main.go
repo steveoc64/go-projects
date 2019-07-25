@@ -89,21 +89,21 @@ func threeLapsSpoolLength(SpoolDiameter, WireDiameter, TotalExtension, Length fl
 
 func main() {
 
-	materials := parse()
+	data := parse()
 
-	for i := 0; i < len(materials.Materials); i++ {
+	for i := 0; i < len(data.Materials); i++ {
 
-		Elasticity := materials.Materials[i].Properties.Elasticity
-		Dencity := materials.Materials[i].Properties.Dencity
-		YieldStrength := materials.Materials[i].Properties.Yieldstrength
-		TensileStrength := materials.Materials[i].Properties.Tensilestrength
-		ThreadDiameter := materials.Materials[i].Properties.Threaddiameter
-		SpoolDiameter := materials.Materials[i].Properties.Spooldiameter
-		Length := materials.Materials[i].Properties.Wirelength
-		Load := materials.Materials[i].Properties.Load
-		SafetyFactor := materials.Materials[i].Properties.Safetyfactor
+		Elasticity := data.Materials[i].Properties.Elasticity
+		Dencity := data.Materials[i].Properties.Dencity
+		YieldStrength := data.Materials[i].Properties.Yieldstrength
+		TensileStrength := data.Materials[i].Properties.Tensilestrength
+		ThreadDiameter := data.Materials[i].Properties.Threaddiameter
+		SpoolDiameter := data.Materials[i].Properties.Spooldiameter
+		Length := data.Materials[i].Properties.Wirelength
+		Load := data.Materials[i].Properties.Load
+		SafetyFactor := data.Materials[i].Properties.Safetyfactor
 
-		fmt.Printf("\nEgenskaper för %s:\n\n", materials.Materials[i].Name)
+		fmt.Printf("\nEgenskaper för %s:\n\n", data.Materials[i].Name)
 
 		// Beräkning av tillåten spänning samt definiering av trådens area och vikt.
 		σTill := YieldStrength / SafetyFactor
