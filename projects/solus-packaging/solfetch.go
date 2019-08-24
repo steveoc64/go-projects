@@ -1,8 +1,8 @@
 package main
 
 import (
-  "fmt"
 	"flag"
+	"fmt"
 	"log"
 	"os/exec"
 )
@@ -18,7 +18,6 @@ func fetch(command string) {
 	}
 }
 
-
 func main() {
 	// Let flag parse the command line arguments and then input the first argument in to repo variable.
 	flag.Parse()
@@ -29,7 +28,7 @@ func main() {
 		log.Fatalln("Usage: solfetch [repository name]")
 	}
 
-  	// Stitch together the full path to the repository.
+	// Stitch together the full path to the repository.
 	path := "git clone https://dev.getsol.us/source/" + repo + ".git"
 
 	// Run the git command to download the whole repository.
