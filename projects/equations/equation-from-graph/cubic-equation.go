@@ -2,8 +2,23 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 )
+
+func printScanInt(output string) (input int) {
+	fmt.Print(output)
+	fmt.Scanln(&input)
+
+	return input
+}
+
+func printScanFloat(output string) (input float64) {
+	fmt.Print(output)
+	fmt.Scanln(&input)
+
+	return input
+}
 
 func bcdValues(Xvalue1, Xvalue2, Xvalue3, A float64) (B, C, D float64) {
 	B = A * (-Xvalue3 - Xvalue2 - Xvalue1)
@@ -19,88 +34,113 @@ func gradient(YaxisX, YaxisY, Xvalue1, Xvalue2, Xvalue3 float64) float64 {
 	return YaxisY / ((YaxisX - Xvalue1) * (YaxisX - Xvalue2) * (YaxisX - Xvalue3))
 }
 
-/*
 func equationRoots(NullPoints int) (NullPoint1, NullPoint2, NullPoint3 float64) {
-	switch NullPoints {
-	case 3:
-		NullPoint1, NullPoint2, NullPoint3 = threeRoots()
-	case 2:
-		NullPoint1, NullPoint2 = twoRoots()
-		// The point is called a rebound point and two root points will have the same value
-		NullPoint3 = NullPoint2
-	case 1:
-		NullPoint1 = oneRoot()
-		// The point is called a rebound point and all three root points will have the same value
+
+	// Handle common inputs for differrent amount of root points.
+	if NullPoints == 3 || NullPoints == 2 {
+		NullPoint1 = printScanFloat("First x-value: ")
+		NullPoint2 = printScanFloat("Second x-value: ")
+	} else if NullPoints == 1 {
+		NullPoint1 = printScanFloat("X-value: ")
 		NullPoint2, NullPoint3 = NullPoint1, NullPoint1
-	case 0:
-		log.Fatalln("The function has no real roots and can't be parsed by this program!")
-	default:
-		log.Fatalln("A cubic function can only have 3, 2, 1 or 0 roots!")
+	} else {
+		log.Fatalln("A cubic function can only have 3, 2 or 1 roots!")
+	}
+
+	// Ask for third point only if we have three points.
+	if NullPoints == 3 {
+		NullPoint3 = printScanFloat("Third x-value: ")
 	}
 
 	return NullPoint1, NullPoint2, NullPoint3
 }
-*/
-func threeRoots() (NullPoint1, NullPoint2, NullPoint3 float64) {
-	fmt.Println("\nEnter x-values for the three root points:")
-	fmt.Print("First x-value: ")
-	fmt.Scan(&NullPoint1)
 
-	fmt.Print("Second x-value: ")
-	fmt.Scan(&NullPoint2)
-
-	fmt.Print("Third x-value: ")
-	fmt.Scan(&NullPoint3)
-
-	return NullPoint1, NullPoint2, NullPoint3
-}
-
-/*
-func twoRoots() (NullPoint1, NullPoint2 float64) {
-	fmt.Println("\nEnter x-values for the two root points:")
-	fmt.Print("First x-value: ")
-	fmt.Scan(&NullPoint1)
-
-	fmt.Print("Second x-value: ")
-	fmt.Scan(&NullPoint2)
-
-	return NullPoint1, NullPoint2
-}
-
-// Get the root point for one root
-func oneRoot() (NullPoint float64) {
-	fmt.Println("\nEnter x-value for the root point:")
-	fmt.Print("X-value: ")
-	fmt.Scan(&NullPoint)
-
-	return NullPoint
-}
-*/
 func main() {
 	var (
 		Xvalue, Yvalue                     float64
 		NullPoint1, NullPoint2, NullPoint3 float64
-		//NullPoints                         int
+		A, B, C, D                         float64
+		NullPoints                         int
 	)
 
 	fmt.Println("Enter a couple values from graph to get the cubic equation!")
 
 	// Enter the amount of roots in the graph
-	// fmt.Print("\nAmount of roots on the graph (points where y = 0): ")
-	// fmt.Scanln(&NullPoints)
-	NullPoint1, NullPoint2, NullPoint3 = threeRoots()
+	NullPoints = printScanInt("\nAmount of roots on the graph (points where y = 0): ")
+
+	// Calculate null points according to amound of nullpoints.
+	NullPoint1, NullPoint2, NullPoint3 = equationRoots(NullPoints)
 
 	// A random value from the graph to calculate gradient of line
 	fmt.Print("\nEnter a given point on the graph (x, y): ")
 	fmt.Scanf("(%v, %v)", &Xvalue, &Yvalue)
 
 	// Caluclate gradient and the specific varaibles that define the graph
-	A := gradient(Xvalue, Yvalue, NullPoint1, NullPoint2, NullPoint3)
-	B, C, D := bcdValues(NullPoint1, NullPoint2, NullPoint3, A)
-
-	if math.Round(A) == 1 {
-		fmt.Printf("y = x³ + %.0fx² + %.0fx + %.0f\n", B, C, D)
+	if NullPoints == 1 || NullPoints == 3 {
+		A = gradient(Xvalue, Yvalue, NullPoint1, NullPoint2, NullPoint3)
+		B, C, D = bcdValues(NullPoint1, NullPoint2, NullPoint3, A)
 	} else {
-		fmt.Printf("y = %.0fx³ + %.0fx² + %.0fx + %.0f\n", A, B, C, D)
+		// We get the right result for the function 3(x-2)(x-2)(x+1) using this block. -1, 2 (0, 12)
+		A = gradient(Xvalue, Yvalue, NullPoint1, NullPoint2, NullPoint2)
+		B, C, D = bcdValues(NullPoint1, NullPoint2, NullPoint2, A)
+
+		HL := A * (Xvalue - NullPoint2) * (Xvalue - NullPoint2) * (Xvalue - NullPoint1)
+
+		// Needs to do this for 3(x-2)(x+1)(x+1) to get the rigth result, but I can't get it to work. -1, 2 (1, -12)
+		if Yvalue != HL {
+
+			A = gradient(Xvalue, Yvalue, NullPoint2, NullPoint1, NullPoint1)
+			B, C, D = bcdValues(NullPoint2, NullPoint1, NullPoint1, A)
+		}
+
+	}
+
+	// Make sure that we prettyPrint everything to avoid printing "+ -5x" for example.
+	prettyPrint(A, B, C, D)
+}
+
+// This is an utter abommination. Don't judge me please...
+func prettyPrint(A, B, C, D float64) {
+	if math.Round(A) == 1 {
+		if B < 0 && C >= 0 && D >= 0 {
+			fmt.Printf("y = x³ - %.0fx² + %.0fx + %.0f\n", -B, C, D)
+		} else if B > 0 && C <= 0 && D >= 0 {
+			fmt.Printf("y = x³ + %.0fx² - %.0fx + %.0f\n", B, -C, D)
+		} else if B > 0 && C >= 0 && D <= 0 {
+			fmt.Printf("y = x³ + %.0fx² + %.0fx - %.0f\n", B, C, -D)
+		} else if B < 0 && C <= 0 && D >= 0 {
+			fmt.Printf("y = x³ - %.0fx² - %.0fx + %.0f\n", -B, -C, D)
+		} else if B > 0 && C <= 0 && D <= 0 {
+			fmt.Printf("y = x³ + %.0fx² - %.0fx - %.0f\n", B, -C, -D)
+		} else if B < 0 && C >= 0 && D <= 0 {
+			fmt.Printf("y = x³ - %.0fx² + %.0fx - %.0f\n", -B, C, -D)
+		} else if B > 0 && C <= 0 && D >= 0 {
+			fmt.Printf("y = x³ + %.0fx² - %.0fx + %.0f\n", B, +C, D)
+		} else if B < 0 && C <= 0 && D <= 0 {
+			fmt.Printf("y = x³ - %.0fx² + %.0fx - %.0f\n", -B, -C, -D)
+		} else {
+			fmt.Printf("y = x³ + %.0fx² + %.0fx + %.0f\n", B, C, D)
+		}
+
+	} else {
+		if B < 0 && C >= 0 && D >= 0 {
+			fmt.Printf("y = %.0fx³ - %.0fx² + %.0fx + %.0f\n", A, -B, C, D)
+		} else if B > 0 && C <= 0 && D >= 0 {
+			fmt.Printf("y = %.0fx³ + %.0fx² - %.0fx + %.0f\n", A, B, -C, D)
+		} else if B > 0 && C >= 0 && D <= 0 {
+			fmt.Printf("y = %.0fx³ + %.0fx² + %.0fx - %.0f\n", A, B, C, -D)
+		} else if B < 0 && C <= 0 && D >= 0 {
+			fmt.Printf("y = %.0fx³ - %.0fx² - %.0fx + %.0f\n", A, -B, -C, D)
+		} else if B > 0 && C <= 0 && D <= 0 {
+			fmt.Printf("y = %.0fx³ + %.0fx² - %.0fx - %.0f\n", A, B, -C, -D)
+		} else if B < 0 && C >= 0 && D <= 0 {
+			fmt.Printf("y = %.0fx³ - %.0fx² + %.0fx - %.0f\n", A, -B, C, -D)
+		} else if B > 0 && C <= 0 && D >= 0 {
+			fmt.Printf("y = %.0fx³ + %.0fx² - %.0fx + %.0f\n", A, B, +C, D)
+		} else if B < 0 && C <= 0 && D <= 0 {
+			fmt.Printf("y = %.0fx³ - %.0fx² + %.0fx - %.0f\n", A, -B, -C, -D)
+		} else {
+			fmt.Printf("y = %.0fx³ + %.0fx² + %.0fx + %.0f\n", A, B, C, D)
+		}
 	}
 }
