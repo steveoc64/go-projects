@@ -6,6 +6,7 @@ import (
 	"math"
 )
 
+// Function to take text to print and then scan input rigth after. Only for ints.
 func printScanInt(output string) (input int) {
 	fmt.Print(output)
 	fmt.Scanln(&input)
@@ -13,6 +14,7 @@ func printScanInt(output string) (input int) {
 	return input
 }
 
+// Function to take text to print and then scan input rigth after. Only for float64s.
 func printScanFloat(output string) (input float64) {
 	fmt.Print(output)
 	fmt.Scanln(&input)
@@ -20,6 +22,7 @@ func printScanFloat(output string) (input float64) {
 	return input
 }
 
+// Function to calculate all the values of B, C and D in the equation. Look up maths if you don't understand.
 func bcdValues(Xvalue1, Xvalue2, Xvalue3, A float64) (B, C, D float64) {
 	B = A * (-Xvalue3 - Xvalue2 - Xvalue1)
 	C = A * ((Xvalue2 * Xvalue3) + (Xvalue1 * Xvalue3) + (Xvalue1 * Xvalue2))
@@ -28,12 +31,14 @@ func bcdValues(Xvalue1, Xvalue2, Xvalue3, A float64) (B, C, D float64) {
 	return B, C, D
 }
 
+// Gradient calculates the A part of the equation which is the gradient of the line. Look up maths if you don't understand.
 func gradient(YaxisX, YaxisY, Xvalue1, Xvalue2, Xvalue3 float64) float64 {
 	// Function that calculates the gradient from one point and three differnet x-values
 	// Look up how to get the k-value from a cubic equation to understand it
 	return YaxisY / ((YaxisX - Xvalue1) * (YaxisX - Xvalue2) * (YaxisX - Xvalue3))
 }
 
+// Common inputs for the three different amount of root points.
 func equationRoots(NullPoints int) (NullPoint1, NullPoint2, NullPoint3 float64) {
 
 	// Handle common inputs for differrent amount of root points.
