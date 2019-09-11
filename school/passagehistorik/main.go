@@ -68,20 +68,6 @@ func main() {
 
 	fmt.Println(len(names))
 
-	/*
-		person := &Data{"", 0}
-		enc := xml.NewEncoder(os.Stdout)
-
-		for i := 0; i < len(names); i++ {
-			person = &Data{names[i], 1}
-
-			enc.Indent("  ", "    ")
-			if err := enc.Encode(person); err != nil {
-				fmt.Printf("error: %v\n", err)
-			}
-		}
-
-	*/
 }
 
 // ReadPDF reads the content of the whole pdf file and prints it as text.
