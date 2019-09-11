@@ -38,7 +38,7 @@ func ParseNames(content string) (names []string) {
 		}
 	}
 
-	// Unalocate mamory from first array
+	// Unalocate mamory from first array and the removal array.
 	textArr, removal = nil, nil
 
 	// Array housing a character list for characters to strip out from all the names.
