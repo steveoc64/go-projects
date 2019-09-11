@@ -11,17 +11,25 @@ import (
 
 // ParseNames takes a string of data from the pdf document medley sends out and parses the names from it.
 func ParseNames(content string) (names []string) {
-	// Abommination of cleanups for the content string.
-	content = strings.ReplaceAll(content, "Curt Nicolingymnasiet AB (elever)", "")
-	content = strings.ReplaceAll(content, "Curt Nicolingymnasiet AB", "")
-	content = strings.ReplaceAll(content, "Passagehistorik per person220Antal,", "")
-	content = strings.ReplaceAll(content, "Person:", "\n")
-	content = strings.ReplaceAll(content, " totalt:", "")
-	content = strings.ReplaceAll(content, "Dumtumintervall:", "")
-	content = strings.ReplaceAll(content, "TidKortnummerVärdekortResultatLäsareMeddelandeNytt besök", "\n")
+	
+	// Arrays with the void and new line that we peplace with.
+	var removal = [2]string{"\n", ""}
+	var replaces = [7]string{"Person:", "TidKortnummerVärdekortResultatLäsareMeddelandeNytt besök", "Dumtumintervall:", " totalt:", "Passagehistorik per person220Antal,", "Curt Nicolingymnasiet AB", "Curt Nicolingymnasiet AB (elever)"}
+	
+	// Loop through the things we should remove instead of having an abbomination of removals.
+	for i := 0; i < 7; i++ {
+		if i == 0 || i == 1 {
+			content = strings.ReplaceAll(content, replaces[i], removal[0])
+		} else {
+			content = strings.ReplaceAll(content, replaces[i], removal[1])
+		}
+	}
+
+	// Make sure to unallocate memory from the two arrays.
+	removal[1], replaces = "", nil
 
 	// Split the string in to an array for every new line.
-	textArr := strings.Split(content, "\n")
+	textArr := strings.Split(content, removal[0])
 
 	// Loop through the text array and append every line with uneaven index to names array.
 	for i := 0; i < len(textArr); i++ {
@@ -31,7 +39,7 @@ func ParseNames(content string) (names []string) {
 	}
 
 	// Unalocate mamory from first array
-	textArr = nil
+	textArr, removal = nil, nil
 
 	// Array housing a character list for characters to strip out from all the names.
 	var replaces = [12]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", " - "}
