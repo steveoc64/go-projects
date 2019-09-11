@@ -38,29 +38,12 @@ func ParseNames(content string) (names []string) {
 	// Array housing a character list for characters to strip out from all the names.
 	var replace2 = [15]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", " - ", "Passagehistorik per personAntal,", "Passagehistorik per personAntal,    (elever)", "    (elever)"}
 
-	names[len(names)-1] = ""
-
 	// Interate through every name and remove left over chracters.
 	for i := 0; i < len(names); i++ {
 		for f := 0; f < len(replace2); f++ {
 			names[i] = strings.ReplaceAll(names[i], replace2[f], "")
 		}
 	}
-
-	/*
-		person := &Data{"", 0}
-		enc := xml.NewEncoder(os.Stdout)
-
-		for i := 0; i < len(names); i++ {
-			person = &Data{names[i], 1}
-
-			enc.Indent("  ", "    ")
-			if err := enc.Encode(person); err != nil {
-				fmt.Printf("error: %v\n", err)
-			}
-		}
-
-	*/
 
 	return
 }
@@ -84,6 +67,21 @@ func main() {
 	}
 
 	fmt.Println(len(names))
+
+	/*
+		person := &Data{"", 0}
+		enc := xml.NewEncoder(os.Stdout)
+
+		for i := 0; i < len(names); i++ {
+			person = &Data{names[i], 1}
+
+			enc.Indent("  ", "    ")
+			if err := enc.Encode(person); err != nil {
+				fmt.Printf("error: %v\n", err)
+			}
+		}
+
+	*/
 }
 
 // ReadPDF reads the content of the whole pdf file and prints it as text.
