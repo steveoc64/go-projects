@@ -14,7 +14,7 @@ func ParseNames(content string) (names []string) {
 
 	// Arrays with the void and new line that we peplace with.
 	var removal = [2]string{"\n", ""}
-	var replaces = [7]string{"Person:", "TidKortnummerVärdekortResultatLäsareMeddelandeNytt besök", "Dumtumintervall:", " totalt:", "Passagehistorik per person220Antal,", "Curt Nicolingymnasiet AB", "Curt Nicolingymnasiet AB (elever)"}
+	var replaces = [8]string{"Person:", "TidKortnummerVärdekortResultatLäsareMeddelandeNytt besök", "Dumtumintervall:", " totalt:", "Passagehistorik per person220Antal,", "Curt Nicolingymnasiet AB", "Curt Nicolingymnasiet AB (elever)", "Passagehistorik per personAntal,"}
 
 	// Loop through the things we should remove instead of having an abbomination of removals.
 	for i := 0; i < 7; i++ {
@@ -44,6 +44,8 @@ func ParseNames(content string) (names []string) {
 	// Array housing a character list for characters to strip out from all the names.
 	var replaces = [12]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", " - "}
 
+	names[len(names)-1] = ""
+	
 	// Interate through every name and remove left over chracters.
 	for i := 0; i < len(names); i++ {
 		for f := 0; f < len(replaces); f++ {
@@ -52,6 +54,7 @@ func ParseNames(content string) (names []string) {
 		fmt.Println(names[i])
 	}
 
+	/*
 	person := &Data{"", 0}
 	enc := xml.NewEncoder(os.Stdout)
 
@@ -63,7 +66,9 @@ func ParseNames(content string) (names []string) {
 			fmt.Printf("error: %v\n", err)
 		}
 	}
-
+	
+	*/
+	
 	return
 }
 
