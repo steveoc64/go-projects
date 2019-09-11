@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"log"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/ledongthuc/pdf"
 )
@@ -48,10 +51,8 @@ func ParseNames(content string) (names []string) {
 	return
 }
 
-func main() {
-	flag.Parse()
-	fileToParse := flag.Arg(0)
-
+// Importer is  just a handler function to clean up the code in main().
+func Importer(fileToParse string) {
 	// Read the pdf file using ReadPDF function.
 	content, err := ReadPDF(fileToParse)
 	if err != nil {
@@ -66,8 +67,75 @@ func main() {
 		fmt.Println(names[i])
 	}
 
-	fmt.Println(len(names))
+	fmt.Println("Antal elever på medley under veckan:", len(names))
 
+	CheckForData(names)
+}
+
+// CheckForData checks that we have the data file, if not, we create it.
+func CheckForData(names []string) {
+	// Get current year from time server.
+	year := time.Now().Year()
+
+	// Get current month and determine VT or HT term.
+	month := time.Now().Month()
+	var term string
+	switch string(month) {
+	case "January", "February", "March", "April", "May", "June":
+		term = "VT"
+	case "August", "September", "October", "November", "December":
+		term = "HT"
+	default:
+		log.Fatalln("You really shouldn't work in July. Please take some time off!")
+	}
+
+	// Make the file name to write data to.
+	filename := term + "-" + string(year) + ".xml"
+
+	// Checking if we have a file with the set name for the term.
+	if _, err := os.Stat(filename); err == nil {
+		// It exsists, we should call a function to update the data there.
+	} else if os.IsNotExist(err) {
+		// File isn't there, we should create it.
+		CreateFile(filename)
+
+		// Now call function to update the data from the names array.
+	} else {
+		// Test some schrodinger stuff where the file may or may not exist.
+		panic(err)
+	}
+}
+
+// UpdateXMLFile updates the xml file with imported data.
+func UpdateXMLFile() {
+
+}
+
+// CreateFile uses os.Create to make a file.
+func CreateFile(filename string) *os.File {
+	file, err := os.Create(filename)
+	if err != nil {
+		panic(err)
+	}
+
+	return file
+}
+
+func main() {
+	flag.Parse()
+	command := flag.Arg(0)
+	fileToParse := flag.Arg(1)
+
+	if command == "import" {
+		/*names := */ Importer(fileToParse)
+	} else {
+		log.Fatalln("Usage:\n			Importing a PDF:\n						cmpp import [file.pdf]")
+	}
+
+	// TODO:
+	// - Add function to update xml data.
+	// - Add option to display users with less than x visits.
+	// - Make a user interface.
 }
 
 // ReadPDF reads the content of the whole pdf file and prints it as text.
