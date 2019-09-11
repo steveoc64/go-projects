@@ -17,7 +17,7 @@ func ParseNames(content string) (names []string) {
 	var replace1 = [7]string{"Person:", "TidKortnummerVärdekortResultatLäsareMeddelandeNytt besök", "Dumtumintervall:", " totalt:", "Passagehistorik per person220Antal,", "Curt Nicolingymnasiet AB", "Curt Nicolingymnasiet AB (elever)"}
 
 	// Loop through the things we should remove instead of having an abbomination of removals.
-	for i := 0; i < 7; i++ {
+	for i := 0; i < len(replace1); i++ {
 		if i == 0 || i == 1 {
 			content = strings.ReplaceAll(content, replace1[i], removal[0])
 		} else {
