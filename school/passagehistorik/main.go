@@ -14,14 +14,14 @@ func ParseNames(content string) (names []string) {
 
 	// Arrays with the void and new line that we peplace with.
 	var removal = [2]string{"\n", ""}
-	var replaceString = [8]string{"Person:", "TidKortnummerVärdekortResultatLäsareMeddelandeNytt besök", "Dumtumintervall:", " totalt:", "Passagehistorik per person220Antal,", "Curt Nicolingymnasiet AB", "Curt Nicolingymnasiet AB (elever)", "Passagehistorik per personAntal,"}
+	var replace1 = [7]string{"Person:", "TidKortnummerVärdekortResultatLäsareMeddelandeNytt besök", "Dumtumintervall:", " totalt:", "Passagehistorik per person220Antal,", "Curt Nicolingymnasiet AB", "Curt Nicolingymnasiet AB (elever)"}
 
 	// Loop through the things we should remove instead of having an abbomination of removals.
 	for i := 0; i < 7; i++ {
 		if i == 0 || i == 1 {
-			content = strings.ReplaceAll(content, replaceString[i], removal[0])
+			content = strings.ReplaceAll(content, replace1[i], removal[0])
 		} else {
-			content = strings.ReplaceAll(content, replaceString[i], removal[1])
+			content = strings.ReplaceAll(content, replace1[i], removal[1])
 		}
 	}
 
@@ -36,16 +36,15 @@ func ParseNames(content string) (names []string) {
 	}
 
 	// Array housing a character list for characters to strip out from all the names.
-	var replaceChar = [12]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", " - "}
+	var replace2 = [15]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", " - ", "Passagehistorik per personAntal,", "Passagehistorik per personAntal,    (elever)", "    (elever)"}
 
 	names[len(names)-1] = ""
 
 	// Interate through every name and remove left over chracters.
 	for i := 0; i < len(names); i++ {
-		for f := 0; f < len(replaceChar); f++ {
-			names[i] = strings.ReplaceAll(names[i], replaceChar[f], "")
+		for f := 0; f < len(replace2); f++ {
+			names[i] = strings.ReplaceAll(names[i], replace2[f], "")
 		}
-		fmt.Println(names[i])
 	}
 
 	/*
@@ -83,6 +82,8 @@ func main() {
 	for i := 0; i < len(names); i++ {
 		fmt.Println(names[i])
 	}
+
+	fmt.Println(len(names))
 }
 
 // ReadPDF reads the content of the whole pdf file and prints it as text.
