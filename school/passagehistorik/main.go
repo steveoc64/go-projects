@@ -14,19 +14,16 @@ func ParseNames(content string) (names []string) {
 
 	// Arrays with the void and new line that we peplace with.
 	var removal = [2]string{"\n", ""}
-	var replaces = [8]string{"Person:", "TidKortnummerVärdekortResultatLäsareMeddelandeNytt besök", "Dumtumintervall:", " totalt:", "Passagehistorik per person220Antal,", "Curt Nicolingymnasiet AB", "Curt Nicolingymnasiet AB (elever)", "Passagehistorik per personAntal,"}
+	var replaceString = [8]string{"Person:", "TidKortnummerVärdekortResultatLäsareMeddelandeNytt besök", "Dumtumintervall:", " totalt:", "Passagehistorik per person220Antal,", "Curt Nicolingymnasiet AB", "Curt Nicolingymnasiet AB (elever)", "Passagehistorik per personAntal,"}
 
 	// Loop through the things we should remove instead of having an abbomination of removals.
 	for i := 0; i < 7; i++ {
 		if i == 0 || i == 1 {
-			content = strings.ReplaceAll(content, replaces[i], removal[0])
+			content = strings.ReplaceAll(content, replaceString[i], removal[0])
 		} else {
-			content = strings.ReplaceAll(content, replaces[i], removal[1])
+			content = strings.ReplaceAll(content, replaceString[i], removal[1])
 		}
 	}
-
-	// Make sure to unallocate memory from the two arrays.
-	removal[1], replaces = "", nil
 
 	// Split the string in to an array for every new line.
 	textArr := strings.Split(content, removal[0])
@@ -38,37 +35,34 @@ func ParseNames(content string) (names []string) {
 		}
 	}
 
-	// Unalocate mamory from first array and the removal array.
-	textArr, removal = nil, nil
-
 	// Array housing a character list for characters to strip out from all the names.
-	var replaces = [12]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", " - "}
+	var replaceChar = [12]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", " - "}
 
 	names[len(names)-1] = ""
-	
+
 	// Interate through every name and remove left over chracters.
 	for i := 0; i < len(names); i++ {
-		for f := 0; f < len(replaces); f++ {
-			names[i] = strings.ReplaceAll(names[i], replaces[f], "")
+		for f := 0; f < len(replaceChar); f++ {
+			names[i] = strings.ReplaceAll(names[i], replaceChar[f], "")
 		}
 		fmt.Println(names[i])
 	}
 
 	/*
-	person := &Data{"", 0}
-	enc := xml.NewEncoder(os.Stdout)
+		person := &Data{"", 0}
+		enc := xml.NewEncoder(os.Stdout)
 
-	for i := 0; i < len(names); i++ {
-		person = &Data{names[i], 1}
+		for i := 0; i < len(names); i++ {
+			person = &Data{names[i], 1}
 
-		enc.Indent("  ", "    ")
-		if err := enc.Encode(person); err != nil {
-			fmt.Printf("error: %v\n", err)
+			enc.Indent("  ", "    ")
+			if err := enc.Encode(person); err != nil {
+				fmt.Printf("error: %v\n", err)
+			}
 		}
-	}
-	
+
 	*/
-	
+
 	return
 }
 
