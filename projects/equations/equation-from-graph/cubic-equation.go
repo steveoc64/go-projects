@@ -6,6 +6,8 @@ import (
 	"math"
 )
 
+// Gotta tell it which point rebounds twice. Thanks Anna! The rebind point is the one that doesn't go through!!!
+
 // Function to take text to print and then scan input rigth after. Only for ints.
 func printScanInt(output string) (input int) {
 	fmt.Print(output)
