@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"encoding/xml"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -80,13 +82,13 @@ func CheckForData(names []string) {
 	// Get current month and determine VT or HT term.
 	month := time.Now().Month()
 	var term string
-	switch string(month) {
-	case "January", "February", "March", "April", "May", "June":
+	switch month {
+	case time.January, time.February, time.March, time.April, time.May, time.June:
 		term = "VT"
-	case "August", "September", "October", "November", "December":
+	case time.August, time.September, time.October, time.November, time.December:
 		term = "HT"
 	default:
-		log.Fatalln("You really shouldn't work in July. Please take some time off!")
+		log.Fatalln("You really shouldn't work in July. Please take some time off! :)")
 	}
 
 	// Make the file name to write data to.
@@ -95,11 +97,14 @@ func CheckForData(names []string) {
 	// Checking if we have a file with the set name for the term.
 	if _, err := os.Stat(filename); err == nil {
 		// It exsists, we should call a function to update the data there.
+		UpdateXMLFile(names, filename)
+
 	} else if os.IsNotExist(err) {
 		// File isn't there, we should create it.
 		CreateFile(filename)
 
 		// Now call function to update the data from the names array.
+		UpdateXMLFile(names, filename)
 	} else {
 		// Test some schrodinger stuff where the file may or may not exist.
 		panic(err)
@@ -107,8 +112,19 @@ func CheckForData(names []string) {
 }
 
 // UpdateXMLFile updates the xml file with imported data.
-func UpdateXMLFile() {
+func UpdateXMLFile(names []string, filename string) {
+	var updatePerson Data
+	// Get this working for * sake...
+	updatePerson = Data{Name: names[0], Visits: +1}
 
+	//Marchal the xml content with some nice indenting.
+	file, err := xml.MarshalIndent(updatePerson, "  ", "    ")
+	if err != nil {
+		panic(err)
+	}
+
+	// Write to the file.
+	_ = ioutil.WriteFile(filename, file, 0644)
 }
 
 // CreateFile uses os.Create to make a file.
