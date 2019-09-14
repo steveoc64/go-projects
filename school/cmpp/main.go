@@ -98,7 +98,7 @@ func CheckForData(names []string) {
 	// Checking if we have a file with the set name for the term.
 	if _, err := os.Stat(filename); err == nil {
 		// It exsists, we should call a function to update the data there.
-
+		UpdateExistingXML(names, filename)
 	} else if os.IsNotExist(err) {
 		// File isn't there, we should create it.
 		CreateFile(filename)
@@ -143,13 +143,56 @@ func CreateFile(filename string) *os.File {
 	return file
 }
 
+// UpdateExistingXML updates the data in a xml file with new data.
+func UpdateExistingXML(names []string, filename string) {
+	// Open up the xml file that already exists.
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Make sure to close it also.
+	defer file.Close()
+
+	// Read the data from the opened file.
+	byteValue, _ := ioutil.ReadAll(file)
+
+	// Unmarshal the xml data in to our Data struct.
+	data := Data{}
+	xml.Unmarshal(byteValue, &data)
+
+	// Something is wrong with this set of logic!!!
+	// Don't change break to continue, it will bloody hell loop infinitly and freeze the computer! Don't do that again!!!
+	for a := 0; a < len(data.Person); a++ {
+		for b := 0; b < len(names); b++ {
+			if data.Person[a].Name == names[b] {
+				data.Person[a].Visits++
+				break
+			} else {
+				data.Person = append(data.Person, Person{Name: names[b], Visits: +1})
+				break
+			}
+		}
+	}
+
+	//Marchal the xml content with some nice indenting.
+	file2, err := xml.MarshalIndent(data, "  ", "    ")
+	if err != nil {
+		panic(err)
+	}
+
+	// Write to the file.
+	_ = ioutil.WriteFile(filename, file2, 0644)
+
+}
+
 func main() {
 	flag.Parse()
 	command := flag.Arg(0)
 	fileToParse := flag.Arg(1)
 
 	if command == "import" {
-		/*names := */ Importer(fileToParse)
+		Importer(fileToParse)
 	} else {
 		fmt.Println("Usage:\n			Importing a PDF:\n						cmpp import [file.pdf]")
 		return
