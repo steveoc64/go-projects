@@ -98,25 +98,31 @@ func CheckForData(names []string) {
 	// Checking if we have a file with the set name for the term.
 	if _, err := os.Stat(filename); err == nil {
 		// It exsists, we should call a function to update the data there.
-		UpdateXMLFile(names, filename)
 
 	} else if os.IsNotExist(err) {
 		// File isn't there, we should create it.
 		CreateFile(filename)
 
 		// Now call function to update the data from the names array.
-		UpdateXMLFile(names, filename)
+		InitialImportXML(names, filename)
 	} else {
 		// Test some schrodinger stuff where the file may or may not exist.
 		panic(err)
 	}
 }
 
-// UpdateXMLFile updates the xml file with imported data.
-func UpdateXMLFile(names []string, filename string) {
-	data := Data{Person: []Person{}}
+// InitialImportXML updates the xml file with imported data.
+func InitialImportXML(names []string, filename string) {
+	//data := Data{Person: []Person{}}
 
-	data = Data{Person: []Person{Person{Name: "John Doe", Visits: 1}}}
+	//  Range through names and add the visits.
+	persons := []Person{}
+	for i := 0; i < len(names); i++ {
+		persons = append(persons, Person{names[i], 1})
+	}
+
+	data := Data{Person: persons}
+	//data = Data{Person: []Person{Person{Name: "John Doe", Visits: 1}}}
 
 	//Marchal the xml content with some nice indenting.
 	file, err := xml.MarshalIndent(data, "  ", "    ")
@@ -146,7 +152,8 @@ func main() {
 	if command == "import" {
 		/*names := */ Importer(fileToParse)
 	} else {
-		log.Fatalln("Usage:\n			Importing a PDF:\n						cmpp import [file.pdf]")
+		fmt.Println("Usage:\n			Importing a PDF:\n						cmpp import [file.pdf]")
+		return
 	}
 
 	// TODO:
