@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -92,7 +93,7 @@ func CheckForData(names []string) {
 	}
 
 	// Make the file name to write data to.
-	filename := term + "-" + string(year) + ".xml"
+	filename := term + "-" + strconv.Itoa(year) + ".xml"
 
 	// Checking if we have a file with the set name for the term.
 	if _, err := os.Stat(filename); err == nil {
@@ -113,12 +114,12 @@ func CheckForData(names []string) {
 
 // UpdateXMLFile updates the xml file with imported data.
 func UpdateXMLFile(names []string, filename string) {
-	var updatePerson Data
-	// Get this working for * sake...
-	updatePerson = Data{Name: names[0], Visits: +1}
+	data := Data{Person: []Person{}}
+
+	data = Data{Person: []Person{Person{Name: "John Doe", Visits: 1}}}
 
 	//Marchal the xml content with some nice indenting.
-	file, err := xml.MarshalIndent(updatePerson, "  ", "    ")
+	file, err := xml.MarshalIndent(data, "  ", "    ")
 	if err != nil {
 		panic(err)
 	}
