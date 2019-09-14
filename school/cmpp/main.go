@@ -122,7 +122,6 @@ func InitialImportXML(names []string, filename string) {
 	}
 
 	data := Data{Person: persons}
-	//data = Data{Person: []Person{Person{Name: "John Doe", Visits: 1}}}
 
 	//Marchal the xml content with some nice indenting.
 	file, err := xml.MarshalIndent(data, "  ", "    ")
