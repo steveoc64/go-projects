@@ -10,7 +10,6 @@ type Data struct {
 
 // Person keeps track of the data per person inside the data tag.
 type Person struct {
-	XMLName xml.Name `xml:"person"`
-	Name    string   `xml:"name"`
-	Visits  int      `xml:"visits"`
+	Name   string `xml:"name"`
+	Visits int    `xml:"visits"`
 }
