@@ -15,6 +15,8 @@ import (
 	"github.com/ledongthuc/pdf"
 )
 
+var filename string
+
 // ParseNames takes a string of data from the pdf document medley sends out and parses the names from it.
 func ParseNames(content string) (names []string) {
 
@@ -75,8 +77,8 @@ func Importer(fileToParse string) {
 	CheckForData(names)
 }
 
-// CheckForData checks that we have the data file, if not, we create it.
-func CheckForData(names []string) {
+// Filename makes sure that we get the month and year to create a file.
+func Filename() {
 	// Get current year from time server.
 	year := time.Now().Year()
 
@@ -93,7 +95,11 @@ func CheckForData(names []string) {
 	}
 
 	// Make the file name to write data to.
-	filename := term + "-" + strconv.Itoa(year) + ".xml"
+	filename = term + "-" + strconv.Itoa(year) + ".xml"
+}
+
+// CheckForData checks that we have the data file, if not, we create it.
+func CheckForData(names []string) {
 
 	// Checking if we have a file with the set name for the term.
 	if _, err := os.Stat(filename); err == nil {
@@ -145,30 +151,16 @@ func CreateFile(filename string) *os.File {
 
 // UpdateExistingXML updates the data in a xml file with new data.
 func UpdateExistingXML(names []string, filename string) {
-	// Open up the xml file that already exists.
-	file, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
+	data := ReadDataFromXML()
 
-	// Make sure to close it also.
-	defer file.Close()
-
-	// Read the data from the opened file.
-	byteValue, _ := ioutil.ReadAll(file)
-
-	// Unmarshal the xml data in to our Data struct.
-	data := Data{}
-	xml.Unmarshal(byteValue, &data)
-
-	// Something is wrong with this set of logic!!!
-	// Don't change break to continue, it will bloody hell loop infinitly and freeze the computer! Don't do that again!!!
+	// Loop through data.Person and names to check if a user has been there one more time.
 	for a := 0; a < len(data.Person); a++ {
 		if Contains(data.Person[a].Name, names) {
 			data.Person[a].Visits++
 		}
 	}
 
+	// Loop through names to check if we have new users.
 	for b := 0; b < len(names); b++ {
 		if !ContainsPerson(names[b], data.Person) {
 			data.Person = append(data.Person, Person{Name: names[b], Visits: 1})
@@ -218,21 +210,78 @@ func ContainsPerson(compare string, array []Person) (check bool) {
 	return check
 }
 
+// PrintLessThan print all names with less than x visits.
+func PrintLessThan(lessthan int) {
+	data := ReadDataFromXML()
+	for i := 0; i < len(data.Person); i++ {
+		if data.Person[i].Visits < lessthan {
+			fmt.Println(data.Person[i].Name, data.Person[i].Visits)
+		}
+	}
+}
+
+// ReadDataFromXML reads data from an xml file, couldn't be simpler.
+func ReadDataFromXML() Data {
+
+	// Open up the xml file that already exists.
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Make sure to close it also.
+	defer file.Close()
+
+	// Read the data from the opened file.
+	byteValue, _ := ioutil.ReadAll(file)
+
+	// Unmarshal the xml data in to our Data struct.
+	data := Data{}
+	xml.Unmarshal(byteValue, &data)
+
+	return data
+}
+
 func main() {
 	flag.Parse()
 	command := flag.Arg(0)
 	fileToParse := flag.Arg(1)
 
+	Filename()
+
+	// Handle different commands for the program.
 	if command == "import" {
 		Importer(fileToParse)
+	} else if command == "less" {
+		var lessthan int
+		switch fileToParse {
+		case "10":
+			lessthan = 10
+		case "9":
+			lessthan = 9
+		case "8":
+			lessthan = 8
+		case "7":
+			lessthan = 7
+		case "6":
+			lessthan = 6
+		case "5":
+			lessthan = 5
+		case "4":
+			lessthan = 4
+		case "3":
+			lessthan = 3
+		default:
+			log.Fatalln("Enter a value from three up to ten.")
+		}
+
+		PrintLessThan(lessthan)
 	} else {
-		fmt.Println("Usage:\n			Importing a PDF:\n						cmpp import [file.pdf]")
+		fmt.Println("Usage:\n	Importing a PDF:\n		cmpp import [file.pdf]\n\n	Show users with < x visits:\n		cmpp show [2 < value < 11]")
 		return
 	}
 
 	// TODO:
-	// - Add function to update xml data.
-	// - Add option to display users with less than x visits.
 	// - Make a user interface.
 }
 
