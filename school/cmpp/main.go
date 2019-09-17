@@ -164,14 +164,14 @@ func UpdateExistingXML(names []string, filename string) {
 	// Something is wrong with this set of logic!!!
 	// Don't change break to continue, it will bloody hell loop infinitly and freeze the computer! Don't do that again!!!
 	for a := 0; a < len(data.Person); a++ {
-		for b := 0; b < len(names); b++ {
-			if data.Person[a].Name == names[b] {
-				data.Person[a].Visits++
-				break
-			} else {
-				data.Person = append(data.Person, Person{Name: names[b], Visits: +1})
-				break
-			}
+		if Contains(data.Person[a].Name, names) {
+			data.Person[a].Visits++
+		}
+	}
+
+	for b := 0; b < len(names); b++ {
+		if !ContainsPerson(names[b], data.Person) {
+			data.Person = append(data.Person, Person{Name: names[b], Visits: 1})
 		}
 	}
 
@@ -184,6 +184,38 @@ func UpdateExistingXML(names []string, filename string) {
 	// Write to the file.
 	_ = ioutil.WriteFile(filename, file2, 0644)
 
+}
+
+// Contains tells us if a string exists in an array.
+func Contains(compare string, array []string) (check bool) {
+	for i := 0; i < len(array); i++ {
+		if compare == array[i] {
+			check = true
+			break
+		}
+	}
+
+	if check != true {
+		check = false
+	}
+
+	return check
+}
+
+// ContainsPerson checks if a string contains in a set of person.Name.
+func ContainsPerson(compare string, array []Person) (check bool) {
+	for i := 0; i < len(array); i++ {
+		if compare == array[i].Name {
+			check = true
+			break
+		}
+	}
+
+	if check != true {
+		check = false
+	}
+
+	return check
 }
 
 func main() {
