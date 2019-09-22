@@ -9,7 +9,7 @@ import (
 )
 
 // Importer is  just a handler function to clean up the code in main().
-func Importer(fileToParse string) {
+func Importer(fileToParse string) int {
 	// Read the pdf file using ReadPDF function.
 	content, err := ReadPDF(fileToParse)
 	if err != nil {
@@ -27,6 +27,8 @@ func Importer(fileToParse string) {
 	fmt.Println("Antal elever på medley under veckan:", len(names))
 
 	CheckForData(names)
+
+	return len(names)
 }
 
 // CheckForData checks that we have the data file, if not, we create it.
