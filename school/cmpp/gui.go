@@ -20,7 +20,7 @@ func setupWindow(title string) *gtk.Window {
 	})
 
 	// Set the default size.
-	win.SetDefaultSize(800, 600)
+	win.SetDefaultSize(400, 600)
 	return win
 }
 
@@ -76,7 +76,7 @@ func windowWidgets() *gtk.Widget {
 	grid.SetOrientation(gtk.ORIENTATION_VERTICAL)
 
 	// Create a new button with the label show.
-	show, err := gtk.ButtonNewWithLabel("show")
+	show, err := gtk.ButtonNewWithLabel("Visa antal elever med färre besök än valt nummer ovan")
 	if err != nil {
 		log.Fatalln("Unable to create button:", err)
 	}
@@ -88,7 +88,7 @@ func windowWidgets() *gtk.Widget {
 	}
 
 	// Create a new label for displaying text.
-	label, err := gtk.LabelNew("Names with less than x visits:")
+	label, err := gtk.LabelNew("")
 	if err != nil {
 		log.Fatal("Unable to create label:", err)
 	}
