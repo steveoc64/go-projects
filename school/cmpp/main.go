@@ -1,12 +1,9 @@
 package main
 
 import (
-	"encoding/xml"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"os"
 	"strconv"
 	"time"
 )
@@ -15,11 +12,11 @@ var filename string
 
 // Filename makes sure that we get the month and year to create a file.
 func Filename() {
-	// Get current year from time server.
+	// Determine year and month from local time server.
 	year := time.Now().Year()
-
-	// Get current month and determine VT or HT term.
 	month := time.Now().Month()
+
+	// Handle if it's the spring term or the autumn term.
 	var term string
 	switch month {
 	case time.January, time.February, time.March, time.April, time.May, time.June:
@@ -30,30 +27,8 @@ func Filename() {
 		log.Fatalln("You really shouldn't work in July. Please take some time off! :)")
 	}
 
-	// Make the file name to write data to.
+	// Put together the whole filename from teh data we defined earlier.
 	filename = term + "-" + strconv.Itoa(year) + ".xml"
-}
-
-// ReadDataFromXML reads data from an xml file, couldn't be simpler.
-func ReadDataFromXML() Data {
-
-	// Open up the xml file that already exists.
-	file, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Make sure to close it also.
-	defer file.Close()
-
-	// Read the data from the opened file.
-	byteValue, _ := ioutil.ReadAll(file)
-
-	// Unmarshal the xml data in to our Data struct.
-	data := Data{}
-	xml.Unmarshal(byteValue, &data)
-
-	return data
 }
 
 func main() {
