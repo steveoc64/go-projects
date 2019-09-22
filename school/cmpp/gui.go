@@ -109,9 +109,6 @@ func windowWidgets() *gtk.Widget {
 	entry.SetHExpand(false)
 	label.SetHExpand(true)
 
-	// Attatch the grid next to the entry.
-	grid.AttachNextTo(show, entry, gtk.POS_RIGHT, 1, 1)
-
 	// Add out grid to the scrolled window.
 	scrolled.Add(grid)
 
