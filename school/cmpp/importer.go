@@ -1,14 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
-
-	"github.com/ledongthuc/pdf"
 )
 
 // Importer is  just a handler function to clean up the code in main().
@@ -32,33 +29,6 @@ func Importer(fileToParse string) {
 	CheckForData(names)
 }
 
-// ReadPDF reads the content of the whole pdf file and prints it as text.
-func ReadPDF(path string) (string, error) {
-
-	// Open the pdf file using the pdf library.
-	file, result, err := pdf.Open(path)
-	if err != nil {
-		return "", err
-	}
-
-	// remember to close file.
-	defer file.Close()
-
-	// Create new buffer.
-	var buf bytes.Buffer
-
-	// Make sure to get plain text from pdf.
-	buffer, err := result.GetPlainText()
-	if err != nil {
-		return "", err
-	}
-
-	// Read the buffer that we took plaintext from.
-	buf.ReadFrom(buffer)
-
-	return buf.String(), nil
-}
-
 // CheckForData checks that we have the data file, if not, we create it.
 func CheckForData(names []string) {
 
@@ -80,7 +50,6 @@ func CheckForData(names []string) {
 
 // InitialImportXML updates the xml file with imported data.
 func InitialImportXML(names []string, filename string) {
-	//data := Data{Person: []Person{}}
 
 	//  Range through names and add the visits.
 	persons := []Person{}
