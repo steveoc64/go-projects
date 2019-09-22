@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gotk3/gotk3/gtk"
@@ -24,14 +25,22 @@ func setupWindow(title string) *gtk.Window {
 	return win
 }
 
+func setupButton(label string, onClick func()) *gtk.Button {
+	// Create the button.
+	btn, err := gtk.ButtonNewWithLabel(label)
+	if err != nil {
+		log.Fatalln("Unable to create button:", err)
+	}
+
+	// Connect the button to the on click function.
+	btn.Connect("clicked", onClick)
+
+	return btn
+}
+
 func main() {
 	// Initialize gtk without arguments.
 	gtk.Init(nil)
-
-	btn1, err := gtk.ButtonNewWithLabel("Import")
-	if err != nil {
-		panic(err)
-	}
 
 	// Run setup of window.
 	win := setupWindow("Cng Medley PDF Parser")
@@ -41,7 +50,11 @@ func main() {
 		log.Fatal("Unable to create GtkFixed:", err)
 	}
 
-	fixed.Put(btn1, 100, 200)
+	btn := setupButton("Import", func() {
+		fmt.Println("Thanks for importing a pdf!")
+	})
+
+	fixed.Put(btn, 100, 200)
 
 	win.Add(fixed)
 
