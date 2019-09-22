@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -20,7 +21,7 @@ func setupWindow(title string) *gtk.Window {
 	})
 
 	// Set the default size.
-	win.SetDefaultSize(400, 600)
+	win.SetDefaultSize(400, 230)
 	return win
 }
 
@@ -54,14 +55,17 @@ func initGui() {
 	// Run setup of window.
 	win := setupWindow("Cng Medley PDF Parser")
 
-	win.Add(windowWidgets())
+	// Get all out widgets for the graphical user interface.
+	gui := windowWidgets(win)
 
-	// Show everything and start the main interface loop.
+	win.Add(gui)
+
+	// Show everything and start the main interfac	grid.SetHe loop.
 	win.ShowAll()
 	gtk.Main()
 }
 
-func windowWidgets() *gtk.Widget {
+func windowWidgets(win *gtk.Window) *gtk.Widget {
 
 	// Make a new scrolled window for our grid.
 	scrolled, _ := gtk.ScrolledWindowNew(nil, nil)
@@ -87,22 +91,58 @@ func windowWidgets() *gtk.Widget {
 		log.Fatal("Unable to create entry:", err)
 	}
 
+	// Add a file chooser so the user can select what file to import.
+	file, err := gtk.FileChooserButtonNew("Välj pdf", gtk.FILE_CHOOSER_ACTION_OPEN)
+	if err != nil {
+		log.Fatalln("Unable to create button:", err)
+	}
+
+	// Make a button for importing the data from a file.
+	importer, err := gtk.ButtonNewWithLabel("Importera pdf")
+	if err != nil {
+		log.Fatalln("Unable to create button:", err)
+	}
+
 	// Create a new label for displaying text.
-	label, err := gtk.LabelNew("")
+	label, err := gtk.LabelNew("All data kommer visas här:")
 	if err != nil {
 		log.Fatal("Unable to create label:", err)
 	}
 
-	// Connect the show button to printing out names to teh label.
+	// Add a little spacer to separate some widgets in our grid.
+	spacer, err := gtk.LabelNew("\n")
+	if err != nil {
+		log.Fatal("Unable to create label spacer:", err)
+	}
+
+	// Connect the show button to printing out names to the label.
 	show.Connect("clicked", func() {
+		win.Resize(400, 800)
 		text, _ := entry.GetText()
 		names := StringLessThan(CheckNumber(text))
 		label.SetText(names)
 	})
 
-	// Add the entry, button and labels to out grid.
+	importer.Connect("clicked", func() {
+		visitors := Importer(file.GetFilename())
+		label.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
+	})
+
+	// Set the spacing for our rows and colums.
+	grid.SetRowSpacing(4)
+
+	// Add our text entry and show button,
 	grid.Add(entry)
 	grid.Add(show)
+
+	// Add a little spacer to make it look cleaner.
+	grid.Add(spacer)
+
+	// Add the file chooser and out import button.
+	grid.Add(file)
+	grid.Add(importer)
+
+	// Add the text output label where we display our data.
 	grid.Add(label)
 
 	// Tell the entry that it can't expand and that the label can.
