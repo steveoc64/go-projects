@@ -46,7 +46,7 @@ func main() {
 	} else if command == "less" {
 		PrintLessThan(CheckNumber(fileToParse))
 	} else if command == "gui" || command == "" {
-		initGui()
+		InitGui()
 	} else {
 		fmt.Println("Usage:\n	Importing a PDF:\n		cmpp import [file.pdf]\n\n	Show users with < x visits:\n		cmpp less [1 < value < 11]")
 		return
