@@ -26,6 +26,7 @@ func InitGui() {
 	dataLabel := widget.NewLabel("")
 	dataLabel.Resize(fyne.NewSize(400, 600))
 
+	// Just a little spacer as a quick workaround getting a gap.
 	spacer := widget.NewLabel("")
 
 	/*
@@ -35,14 +36,19 @@ func InitGui() {
 
 	// Create the import button for our file.
 	importPDF := widget.NewButton("Importera", func() {
+		// Load the imported data from the inputed pdf.
 		visitors := Importer(inputedFile.Text)
+
+		// Update the label to show that we have inported stuff.
 		dataLabel.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
 	})
 
 	// Create the button for showing visitors in the gui.
 	displayLessThan := widget.NewButton("Visa antal elever med färre besök än valt nummer ovan", func() {
-		window.Resize(fyne.NewSize(400, 600))
+		// Get the text data that is inputed in the entry above this button.
 		text := inputedNumber.Text
+
+		// Run the name printer for strings and add the data to teh label.
 		names := StringLessThan(CheckNumber(text))
 		dataLabel.SetText(names)
 	})
@@ -56,9 +62,6 @@ func InitGui() {
 		displayLessThan,
 		dataLabel,
 	))
-
-	// We are not actually resizing it here, we set the deafult size.
-	window.Resize(fyne.NewSize(400, 250))
 
 	// Show all our widgets and initialize out main gui loop.
 	window.ShowAndRun()
