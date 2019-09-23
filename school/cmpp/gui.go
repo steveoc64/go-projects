@@ -48,7 +48,8 @@ func setupEntry() *gtk.Entry {
 	return entry
 }
 
-func initGui() {
+// InitGui starts upp the main GTK+3 interface for the application.
+func InitGui() {
 	// Initialize gtk without arguments.
 	gtk.Init(nil)
 
