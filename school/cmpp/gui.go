@@ -99,7 +99,7 @@ func windowWidgets(win *gtk.Window) *gtk.Widget {
 	}
 
 	// Make a button for importing the data from a file.
-	importer, err := gtk.ButtonNewWithLabel("Importera pdf")
+	importer, err := gtk.ButtonNewWithLabel("Importera pdf från vald fil ovan")
 	if err != nil {
 		log.Fatalln("Unable to create button:", err)
 	}
@@ -129,19 +129,19 @@ func windowWidgets(win *gtk.Window) *gtk.Widget {
 		label.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
 	})
 
+	// Add the file chooser and out import button.
+	grid.Add(file)
+	grid.Add(importer)
+
 	// Set the spacing for our rows and colums.
 	grid.SetRowSpacing(4)
-
-	// Add our text entry and show button,
-	grid.Add(entry)
-	grid.Add(show)
 
 	// Add a little spacer to make it look cleaner.
 	grid.Add(spacer)
 
-	// Add the file chooser and out import button.
-	grid.Add(file)
-	grid.Add(importer)
+	// Add our text entry and show button,
+	grid.Add(entry)
+	grid.Add(show)
 
 	// Add the text output label where we display our data.
 	grid.Add(label)
