@@ -53,22 +53,27 @@ func InitGui() {
 
 	// Create the button for showing visitors in the gui.
 	displayLessThan := widget.NewButton("Visa antal elever med färre besök än valt nummer ovan", func() {
-		// Resize the window to something that's useable.
-		window.Resize(fyne.NewSize(400, 550))
-
 		// Run the name printer for strings and add the data to the label.
 		lessthan := CheckNumber(inputedNumber.Text)
 
-		// Loop through names and add a new label for each name.
-		data := ReadDataFromXML()
-		for i := 0; i < len(data.Person); i++ {
-			if data.Person[i].Visits < lessthan {
-				box.Append(widget.NewLabel(fmt.Sprintf("%s: %v besök", data.Person[i].Name, data.Person[i].Visits)))
-			}
-		}
+		if lessthan < 2 || lessthan > 10 {
+			box.Append(widget.NewLabel("Vänligen välj ett nummer mellan (eller lika med) 2 och 10."))
+			window.Resize(fyne.NewSize(400, 200))
+		} else {
+			// Resize the window to something that's useable.
+			window.Resize(fyne.NewSize(400, 550))
 
-		// Resize the window a little bit to avoid overlapping data.
-		window.Resize(fyne.NewSize(400, 600))
+			// Loop through names and add a new label for each name.
+			data := ReadDataFromXML()
+			for i := 0; i < len(data.Person); i++ {
+				if data.Person[i].Visits < lessthan {
+					box.Append(widget.NewLabel(fmt.Sprintf("%s: %v besök", data.Person[i].Name, data.Person[i].Visits)))
+				}
+			}
+
+			// Resize the window a little bit to avoid overlapping data.
+			window.Resize(fyne.NewSize(400, 600))
+		}
 	})
 
 	// Add the last button to the box.
