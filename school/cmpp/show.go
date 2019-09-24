@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"strconv"
 )
 
 // PrintLessThan print all names with less than x visits.
@@ -22,7 +21,7 @@ func StringLessThan(lessthan int) string {
 	data := ReadDataFromXML()
 	for i := 0; i < len(data.Person); i++ {
 		if data.Person[i].Visits < lessthan {
-			text += data.Person[i].Name + " " + strconv.Itoa(data.Person[i].Visits) + "\n"
+			text += fmt.Sprintf("%s: %v besök\n", data.Person[i].Name, data.Person[i].Visits)
 		}
 	}
 
