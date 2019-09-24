@@ -118,10 +118,17 @@ func windowWidgets(win *gtk.Window) *gtk.Widget {
 
 	// Connect the show button to printing out names to the label.
 	show.Connect("clicked", func() {
-		win.Resize(400, 800)
 		text, _ := entry.GetText()
-		names := StringLessThan(CheckNumber(text))
-		label.SetText(names)
+
+		// Handle inputs that might be out of scope.
+		number := CheckNumber(text)
+		if number < 2 || number > 10 {
+			label.SetText("Vänligen mata in ett värde mellan (eller lika med) 2 och 10")
+		} else {
+			win.Resize(400, 800)
+			names := StringLessThan(number)
+			label.SetText(names)
+		}
 	})
 
 	importer.Connect("clicked", func() {
