@@ -5,6 +5,7 @@ import (
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
+	"fyne.io/fyne/layout"
 	"fyne.io/fyne/widget"
 )
 
@@ -27,7 +28,7 @@ func InitGui() {
 	dataLabel.Resize(fyne.NewSize(400, 600))
 
 	// Just a little spacer as a quick workaround getting a gap.
-	spacer := widget.NewLabel("")
+	spacer := layout.NewSpacer()
 
 	/*
 		scrollable := widget.NewScrollContainer(dataLabel)
@@ -35,7 +36,7 @@ func InitGui() {
 	*/
 
 	// Create the import button for our file.
-	importPDF := widget.NewButton("Importera", func() {
+	importPDF := widget.NewButton("Importera data från pdf ovan", func() {
 		// Load the imported data from the inputed pdf.
 		visitors := Importer(inputedFile.Text)
 
