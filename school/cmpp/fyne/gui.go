@@ -30,12 +30,8 @@ func InitGui() {
 	// Create out number input entry.
 	inputedNumber := widget.NewEntry()
 
-	// Create the label where we should be printing our information to.
+	// Create the label that acts as a spacer and importing information.
 	dataLabel := widget.NewLabel("")
-	dataLabel.Resize(fyne.NewSize(400, 600))
-
-	// Just a little spacer as a quick workaround getting a gap.
-	spacer := layout.NewSpacer()
 
 	// Create the import button for our file.
 	importPDF := widget.NewButton("Importera data från pdf ovan", func() {
@@ -48,7 +44,7 @@ func InitGui() {
 
 	// Add three more widgets to the box.
 	box.Append(importPDF)
-	box.Append(spacer)
+	box.Append(dataLabel)
 	box.Append(inputedNumber)
 
 	// Create the button for showing visitors in the gui.
@@ -86,7 +82,7 @@ func InitGui() {
 	window.SetContent(fyne.NewContainerWithLayout(layout.NewBorderLayout(nil, nil, nil, nil), scroll))
 
 	// Set a default size for the window.
-	window.Resize(fyne.NewSize(400, 170))
+	window.Resize(fyne.NewSize(400, 200))
 
 	// Show all our widgets and initialize out main gui loop.
 	window.ShowAndRun()
