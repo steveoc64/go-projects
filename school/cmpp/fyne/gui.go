@@ -33,13 +33,35 @@ func InitGui() {
 	// Create the label that acts as a spacer and importing information.
 	dataLabel := widget.NewLabel("")
 
+	// Create an array to store recently imported file names.
+	var imported []string
+
 	// Create the import button for our file.
 	importPDF := widget.NewButton("Importera data från pdf ovan", func() {
-		// Load the imported data from the inputed pdf.
-		visitors := Importer(inputedFile.Text)
+
+		var visitors int
+
+		// Check if they are the same.
+		if len(imported) != 0 {
+			for i := 0; i < len(imported); i++ {
+				if imported[i] == inputedFile.Text {
+					visitors = -5
+				}
+			}
+		}
+
+		// If they are not, we run the importer.
+		if visitors != -5 {
+			imported = append(imported, inputedFile.Text)
+			visitors = Importer(inputedFile.Text)
+		}
 
 		// Update the label to show that we have inported stuff.
-		dataLabel.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
+		if visitors != -5 {
+			dataLabel.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
+		} else {
+			dataLabel.SetText("Du har redan importerat filen nyligen: " + inputedFile.Text)
+		}
 	})
 
 	// Add three more widgets to the box.
