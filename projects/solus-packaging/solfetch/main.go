@@ -29,5 +29,5 @@ func main() {
 	}
 
 	// Run the git command to download the whole repository from upstream.
-	fetch(Sprintf("git clone https://dev.getsol.us/source/%s.git", repo)
+	fetch(fmt.Sprintf("git clone https://dev.getsol.us/source/%s.git", repo))
 }
