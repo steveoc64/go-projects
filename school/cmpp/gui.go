@@ -48,7 +48,7 @@ func setupEntry() *gtk.Entry {
 	return entry
 }
 
-// InitGui starts upp the main GTK+3 interface for the application.
+// InitGui starts up the whole user interface for us.
 func InitGui() {
 	// Initialize gtk without arguments.
 	gtk.Init(nil)
@@ -99,7 +99,7 @@ func windowWidgets(win *gtk.Window) *gtk.Widget {
 	}
 
 	// Make a button for importing the data from a file.
-	importer, err := gtk.ButtonNewWithLabel("Importera pdf från vald fil ovan")
+	importer, err := gtk.ButtonNewWithLabel("Importera pdf")
 	if err != nil {
 		log.Fatalln("Unable to create button:", err)
 	}
@@ -118,17 +118,21 @@ func windowWidgets(win *gtk.Window) *gtk.Widget {
 
 	// Connect the show button to printing out names to the label.
 	show.Connect("clicked", func() {
+		// Get the text and conver to int.
 		text, _ := entry.GetText()
+		lessthan, err := strconv.Atoi(text)
 
-		// Handle inputs that might be out of scope.
-		number := CheckNumber(text)
-		if number < 2 || number > 10 {
-			label.SetText("Vänligen mata in ett värde mellan (eller lika med) 2 och 10")
+		// Handle exceptions and error if input is not a number.
+		if err != nil || lessthan < 2 || lessthan > 10 {
+			label.SetText("Vänligen välj ett nummer mellan (eller lika med) 2 och 10.")
 		} else {
+			// Resize to fit all the names.
 			win.Resize(400, 800)
-			names := StringLessThan(number)
-			label.SetText(names)
+
+			// Output names to our label.
+			label.SetText(StringLessThan(lessthan))
 		}
+
 	})
 
 	importer.Connect("clicked", func() {
@@ -136,12 +140,12 @@ func windowWidgets(win *gtk.Window) *gtk.Widget {
 		label.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
 	})
 
+	// Set the spacing for our rows and colums.
+	grid.SetRowSpacing(4)
+
 	// Add the file chooser and out import button.
 	grid.Add(file)
 	grid.Add(importer)
-
-	// Set the spacing for our rows and colums.
-	grid.SetRowSpacing(4)
 
 	// Add a little spacer to make it look cleaner.
 	grid.Add(spacer)
