@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strconv"
 )
 
 // PrintLessThan print all names with less than x visits.
@@ -29,29 +30,13 @@ func StringLessThan(lessthan int) string {
 }
 
 // CheckNumber checks for inputed number from command less.
-func CheckNumber(command string) (lessthan int) {
-	switch command {
-	case "10":
-		lessthan = 10
-	case "9":
-		lessthan = 9
-	case "8":
-		lessthan = 8
-	case "7":
-		lessthan = 7
-	case "6":
-		lessthan = 6
-	case "5":
-		lessthan = 5
-	case "4":
-		lessthan = 4
-	case "3":
-		lessthan = 3
-	case "2":
-		lessthan = 2
-	default:
+func CheckNumber(command string) int {
+
+	// Convert string to int.
+	lessthan, err := strconv.Atoi(command)
+	if err != nil || lessthan < 2 || lessthan > 10 {
 		log.Fatalln("Enter a value from two up to ten.")
 	}
 
-	return
+	return lessthan
 }
