@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 	"strconv"
 
 	"fyne.io/fyne"
@@ -41,26 +42,27 @@ func InitGui() {
 
 		var visitors int
 
-		// Check if they are the same.
+		// Check if filenames are the same.
 		if len(imported) != 0 {
 			for i := 0; i < len(imported); i++ {
 				if imported[i] == inputedFile.Text {
+					// Random number that we shouldn't ever get from our function.
 					visitors = -5
 				}
 			}
 		}
 
-		// If they are not, we run the importer.
-		if visitors != -5 {
+		extension := ".pdf"
+
+		// If they are not, we run the importer and set text accordingly.
+		if visitors != -5 && filepath.Ext(inputedFile.Text) == extension {
 			imported = append(imported, inputedFile.Text)
 			visitors = Importer(inputedFile.Text)
-		}
-
-		// Update the label to show that we have inported stuff.
-		if visitors != -5 {
 			dataLabel.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
-		} else {
+		} else if visitors == -5 && filepath.Ext(inputedFile.Text) == extension {
 			dataLabel.SetText("Du har redan importerat filen nyligen: " + inputedFile.Text)
+		} else if filepath.Ext(inputedFile.Text) != extension {
+			dataLabel.SetText("Vänligen importera en fil med .pdf på slutet.")
 		}
 	})
 
