@@ -136,12 +136,33 @@ func windowWidgets(win *gtk.Window) *gtk.Widget {
 
 	})
 
+	var imported []string
+
 	importer.Connect("clicked", func() {
-		if filepath.Ext(file.GetFilename()) != ".pdf" {
-			label.SetText("Vänligen importera en .pdf fil.")
-		} else {
-			visitors := Importer(file.GetFilename())
+
+		var visitors int
+
+		// Check if filenames are the same.
+		if len(imported) != 0 {
+			for i := 0; i < len(imported); i++ {
+				if imported[i] == file.GetFilename() {
+					// Random number that we shouldn't ever get from our function.
+					visitors = -5
+				}
+			}
+		}
+
+		extension := ".pdf"
+
+		// Handle fileextensions and already inputed files.
+		if visitors != -5 && filepath.Ext(file.GetFilename()) == extension {
+			imported = append(imported, file.GetFilename())
+			visitors = Importer(file.GetFilename())
 			label.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
+		} else if visitors == -5 && filepath.Ext(file.GetFilename()) == extension {
+			label.SetText("Du har redan importerat filen nyligen: " + filepath.Base(file.GetFilename()))
+		} else if filepath.Ext(file.GetFilename()) != extension {
+			label.SetText("Vänligen importera en fil med .pdf på slutet.")
 		}
 	})
 
