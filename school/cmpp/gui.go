@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gotk3/gotk3/gtk"
@@ -136,8 +137,12 @@ func windowWidgets(win *gtk.Window) *gtk.Widget {
 	})
 
 	importer.Connect("clicked", func() {
-		visitors := Importer(file.GetFilename())
-		label.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
+		if filepath.Ext(file.GetFilename()) != ".pdf" {
+			label.SetText("Vänligen importera en .pdf fil.")
+		} else {
+			visitors := Importer(file.GetFilename())
+			label.SetText("Antal elever under den veckan: " + strconv.Itoa(visitors))
+		}
 	})
 
 	// Set the spacing for our rows and colums.
