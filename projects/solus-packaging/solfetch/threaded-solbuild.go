@@ -34,11 +34,11 @@ func fetch(command string, result chan bool) {
 }
 
 func main() {
-	// Parse three first arguments in to repo slice.
+	// Grab an array of all our arguments.
 	flag.Parse()
 	repo := flag.Args()
 
-	// Don't proceed if they alread are fetched.
+	// Don't proceed if any of them are alread fetched.
 	for i := range repo {
 		if exists(repo[i]) {
 			log.Fatalln("Don't fetch repos that are already fetched!")
@@ -50,13 +50,13 @@ func main() {
 		log.Fatalln("Usage: solfetch [repository name] [optional] [optional]")
 	}
 
-	// Start up the three channels for communication.
+	// Spin up all of our communication channels.
 	var chanel []chan bool
 	for range repo {
 		chanel = append(chanel, make(chan bool))
 	}
 
-	// Start up cocurrent taskt for fetching up to three repos at once.
+	// Start up cocurrent tasks for fetching up all the repos at once.
 	for i := range repo {
 		go fetch(fmt.Sprintf("git clone https://dev.getsol.us/source/%s.git", repo[i]), chanel[i])
 	}
