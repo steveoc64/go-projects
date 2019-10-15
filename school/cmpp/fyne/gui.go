@@ -74,11 +74,10 @@ func InitGui() {
 	// Create the button for showing visitors in the gui.
 	displayLessThan := widget.NewButton("Visa antal elever med färre besök än valt nummer ovan", func() {
 		// Run the name printer for strings and add the data to the label.
-		lessthan := CheckNumber(inputedNumber.Text)
+		lessthan, err := strconv.Atoi(inputedNumber.Text)
 
-		if lessthan < 2 || lessthan > 10 {
-			box.Append(widget.NewLabel("Vänligen välj ett nummer mellan (eller lika med) 2 och 10."))
-			window.Resize(fyne.NewSize(400, 200))
+		if err != nil || lessthan < 2 || lessthan > 10 {
+			dataLabel.SetText("Vänligen välj ett nummer mellan (eller lika med) 2 och 10.")
 		} else {
 			// Resize the window to something that's useable.
 			window.Resize(fyne.NewSize(400, 550))
