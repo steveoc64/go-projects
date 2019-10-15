@@ -21,14 +21,16 @@ func exists(path string) bool {
 }
 
 // The fetch command runs the git clone command and prints the output to terminal.
-func fetch(command string, result chan string) {
+func fetch(command string, result chan bool) {
 	fetch := exec.Command("sh", "-c", command)
 	output, err := fetch.CombinedOutput()
-	if err != nil && command != "" {
+	if err != nil {
 		panic(err)
+	} else {
+		fmt.Printf("%s", output)
 	}
 
-	result <- string(output)
+	result <- true
 }
 
 func main() {
@@ -49,9 +51,9 @@ func main() {
 	}
 
 	// Start up the three channels for communication.
-	var chanel []chan string
+	var chanel []chan bool
 	for range repo {
-		chanel = append(chanel, make(chan string))
+		chanel = append(chanel, make(chan bool))
 	}
 
 	// Start up cocurrent taskt for fetching up to three repos at once.
@@ -59,14 +61,9 @@ func main() {
 		go fetch(fmt.Sprintf("git clone https://dev.getsol.us/source/%s.git", repo[i]), chanel[i])
 	}
 
-	// Fetch the outputs from each fetch run.
-	var outputs []string
+	// Loop through and grab each boolean channel.
+	var outputs []bool
 	for i := range repo {
 		outputs = append(outputs, <-chanel[i])
-	}
-
-	// Print output to terminal:
-	for i := range outputs {
-		fmt.Print(outputs[i])
 	}
 }
