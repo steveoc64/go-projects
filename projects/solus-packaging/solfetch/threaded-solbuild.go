@@ -8,7 +8,7 @@ import (
 	"os/exec"
 )
 
-// exists returns whether the given file or directory exists
+// Exists returns whether the given file or directory exists
 func exists(path string) bool {
 	_, err := os.Stat(path)
 	if err == nil {
@@ -21,8 +21,8 @@ func exists(path string) bool {
 }
 
 // The fetch command runs the git clone command and prints the output to terminal.
-func fetch(command string, result chan bool) {
-	fetch := exec.Command("sh", "-c", command)
+func fetch(command string, finished chan bool) {
+	fetch := exec.Command("sh", "-c", fmt.Sprintf("git clone https://dev.getsol.us/source/%s.git", command))
 	output, err := fetch.CombinedOutput()
 	if err != nil {
 		panic(err)
@@ -30,7 +30,7 @@ func fetch(command string, result chan bool) {
 		fmt.Printf("%s", output)
 	}
 
-	result <- true
+	finished <- true
 }
 
 func main() {
@@ -38,7 +38,7 @@ func main() {
 	flag.Parse()
 	repo := flag.Args()
 
-	// Don't proceed if any of them are alread fetched.
+	// Don't proceed if any any of the repos are already fetched. 
 	for i := range repo {
 		if exists(repo[i]) {
 			log.Fatalln("Don't fetch repos that are already fetched!")
@@ -56,9 +56,9 @@ func main() {
 		chanel = append(chanel, make(chan bool))
 	}
 
-	// Start up cocurrent tasks for fetching up all the repos at once.
+	// Start up cocurrent tasks for fetching all repos at once.
 	for i := range repo {
-		go fetch(fmt.Sprintf("git clone https://dev.getsol.us/source/%s.git", repo[i]), chanel[i])
+		go fetch(repo[i], chanel[i])
 	}
 
 	// Loop through and grab each boolean channel.
