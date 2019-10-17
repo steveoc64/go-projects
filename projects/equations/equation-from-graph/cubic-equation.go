@@ -61,8 +61,6 @@ func equationRoots(NullPoints int) (NullPoint1, NullPoint2, NullPoint3 float64) 
 		default:
 			log.Fatalln("Invalid root point for rebound!")
 		}
-	case 1:
-		NullPoint1 = printScanFloat("First x-value: ")
 	default:
 		log.Fatalf("A cubic function can't have %v root points. Please enter 1, 2 or 3 rootpoints!", NullPoints)
 	}
@@ -81,7 +79,7 @@ func main() {
 	fmt.Println("Enter a couple values from graph to get the cubic equation!")
 
 	// Enter the amount of roots in the graph.
-	NullPoints = printScanInt("\nAmount of roots on the graph (points where y = 0): ")
+	NullPoints = printScanInt("\nAmount of roots on the graph (points where y = 0, does not work for 1): ")
 
 	// Calculate null points according to amound of nullpoints.
 	NullPoint1, NullPoint2, NullPoint3 = equationRoots(NullPoints)
@@ -95,8 +93,6 @@ func main() {
 	case 3, 2:
 		A = gradient(Xvalue, Yvalue, NullPoint1, NullPoint2, NullPoint3)
 		B, C, D = bcdValues(NullPoint1, NullPoint2, NullPoint3, A)
-	case 1:
-		// Actually define a way to solve these simple calculations...
 	}
 
 	// Make sure that we prettyPrint everything to avoid printing "+ -5x" for example.
@@ -151,4 +147,3 @@ func prettyPrint(A, B, C, D float64) {
 
 // Todo:
 // - Print in the end doesnt use abommination correctly. Example: 2 - 2, -1 -2 (1, -12)...
-// - Add a simple calculate function for third degree functions with one root...
