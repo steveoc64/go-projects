@@ -38,7 +38,7 @@ func main() {
 	flag.Parse()
 	repo := flag.Args()
 
-	// Don't proceed if any any of the repos are already fetched. 
+	// Don't proceed if any any of the repos are already fetched.
 	for i := range repo {
 		if exists(repo[i]) {
 			log.Fatalln("Don't fetch repos that are already fetched!")
@@ -51,19 +51,18 @@ func main() {
 	}
 
 	// Spin up all of our communication channels.
-	var chanel []chan bool
+	var channel []chan bool
 	for range repo {
-		chanel = append(chanel, make(chan bool))
+		channel = append(channel, make(chan bool))
 	}
 
 	// Start up cocurrent tasks for fetching all repos at once.
 	for i := range repo {
-		go fetch(repo[i], chanel[i])
+		go fetch(repo[i], channel[i])
 	}
 
-	// Loop through and grab each boolean channel.
-	var outputs []bool
+	// Loop through and grab the output of each boolean channel without storing it.
 	for i := range repo {
-		outputs = append(outputs, <-chanel[i])
+		<-channel[i]
 	}
 }
