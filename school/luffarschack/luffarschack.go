@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math/rand"
 	"time"
 
 	"fyne.io/fyne"
@@ -10,14 +9,8 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// Global variables:
-var (
-	// Handle pressing buttons.
-	clicked = [9]bool{}
-
-	// Bool to say that we won.
-	finished bool
-)
+// Global variable for defining if a button is pressed or not.
+var clicked = [9]bool{}
 
 // InitGUI starts up the whole interface for out program.
 func InitGUI(channel chan bool) {
@@ -85,14 +78,63 @@ func InitGUI(channel chan bool) {
 		for index := 0; index < 9; index++ {
 
 			// Sleep in order to wait for inputs from the user.
-			time.Sleep(time.Duration(rand.Int63n(5)) * time.Second)
+			time.Sleep(time.Duration(5 * time.Second))
 
+			// Ugly switch statement to set the icons for our buttons.
 			switch {
-			case clicked[0] == true:
+			case clicked[0]:
 				if index%2 == 0 {
 					button1.SetIcon(circle)
 				} else {
 					button1.SetIcon(cross)
+				}
+			case clicked[1]:
+				if index%2 == 0 {
+					button2.SetIcon(circle)
+				} else {
+					button2.SetIcon(cross)
+				}
+			case clicked[2]:
+				if index%2 == 0 {
+					button3.SetIcon(circle)
+				} else {
+					button3.SetIcon(cross)
+				}
+			case clicked[3]:
+				if index%2 == 0 {
+					button4.SetIcon(circle)
+				} else {
+					button4.SetIcon(cross)
+				}
+			case clicked[4]:
+				if index%2 == 0 {
+					button5.SetIcon(circle)
+				} else {
+					button5.SetIcon(cross)
+				}
+			case clicked[5]:
+				if index%2 == 0 {
+					button6.SetIcon(circle)
+				} else {
+					button6.SetIcon(cross)
+				}
+			case clicked[6]:
+				if index%2 == 0 {
+					button7.SetIcon(circle)
+				} else {
+					button7.SetIcon(cross)
+				}
+			case clicked[7]:
+				if index%2 == 0 {
+					button8.SetIcon(circle)
+				} else {
+					button8.SetIcon(cross)
+				}
+			case clicked[8]:
+				if index%2 == 0 {
+					button9.SetIcon(circle)
+				} else {
+					button9.SetIcon(cross)
 				}
 			}
 
