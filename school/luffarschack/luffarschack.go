@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	"math/rand"
+	"time"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
@@ -9,10 +10,22 @@ import (
 	"fyne.io/fyne/widget"
 )
 
+// Global variables:
+var (
+	// Handle pressing buttons.
+	clicked = [9]bool{}
+
+	// Bool to say that we won.
+	finished bool
+)
+
 // InitGUI starts up the whole interface for out program.
-func InitGUI() {
+func InitGUI(channel chan bool) {
 	// Initialize our new fyne interface application.
 	app := app.New()
+
+	// Set the application icon for our program.
+	app.SetIcon(icon)
 
 	// Create the window for our user interface.
 	window := app.NewWindow("Luffarschack")
@@ -22,8 +35,6 @@ func InitGUI() {
 
 	// Define all variables we need for the buttons.
 	var (
-		clicked = [9]bool{}
-
 		button1 = widget.NewButton("", func() {
 			clicked[0] = true
 		})
@@ -50,9 +61,43 @@ func InitGUI() {
 		})
 		button9 = widget.NewButton("", func() {
 			clicked[8] = true
-			fmt.Println(true)
 		})
 	)
+
+	// Append a start button to our vertical box.
+	vbox.Append(widget.NewButton("Click to start", func() {
+		// Make sure to clear all earlier button presses before proceeding.
+		for i := range clicked {
+			clicked[i] = false
+		}
+
+		// Also remove all our icons before proceeding.
+		button1.SetIcon(nil)
+		button2.SetIcon(nil)
+		button3.SetIcon(nil)
+		button4.SetIcon(nil)
+		button5.SetIcon(nil)
+		button6.SetIcon(nil)
+		button7.SetIcon(nil)
+		button8.SetIcon(nil)
+		button9.SetIcon(nil)
+
+		for index := 0; index < 9; index++ {
+
+			// Sleep in order to wait for inputs from the user.
+			time.Sleep(time.Duration(rand.Int63n(5)) * time.Second)
+
+			switch {
+			case clicked[0] == true:
+				if index%2 == 0 {
+					button1.SetIcon(circle)
+				} else {
+					button1.SetIcon(cross)
+				}
+			}
+
+		}
+	}))
 
 	// Append each new row as a new container with gird layout and three buttons.
 	vbox.Append(fyne.NewContainerWithLayout(layout.NewGridLayout(3), button1, button2, button3))
@@ -63,12 +108,18 @@ func InitGUI() {
 	window.SetContent(vbox)
 
 	// Set the size to something small but good looking and usable.
-	window.Resize(fyne.NewSize(200, 100))
+	window.Resize(fyne.NewSize(350, 100))
 
 	// Show all of our set content and run the gui.
 	window.ShowAndRun()
+
+	channel <- true
 }
 
 func main() {
-	InitGUI()
+	channel := make(chan bool)
+
+	go InitGUI(channel)
+
+	<-channel
 }
