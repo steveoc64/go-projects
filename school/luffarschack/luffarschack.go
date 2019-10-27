@@ -13,7 +13,7 @@ import (
 // Global variable for defining if a button is pressed or not.
 var clicked = [9]int8{}
 
-// Global variables for which parts the players own.
+// Global variables for which parts the players own. Index 0 is the first tile and index 8 is the ninth tile.
 var player1 = [9]bool{false, false, false, false, false, false, false, false, false}
 var player2 = [9]bool{false, false, false, false, false, false, false, false, false}
 
@@ -83,8 +83,10 @@ func InitGUI() {
 		button8.SetIcon(nil)
 		button9.SetIcon(nil)
 
-		// Clear index and player owned tiles.
+		// Clear the index to make sure that we start from scratch.
 		index = 0
+
+		// Clear the board information for each player.
 		player1 = [9]bool{false, false, false, false, false, false, false, false, false}
 		player2 = [9]bool{false, false, false, false, false, false, false, false, false}
 
@@ -186,6 +188,7 @@ func InitGUI() {
 				index++
 			}
 
+			// Just print some debug info to the terminal, because we stall the gui otherwice.
 			fmt.Println("Player 1:", player1, "Player 2:", player2)
 
 			// Check if our index is bigger than 9, because then we are finished. If the index is bigger or equal to 4, we can check for a win.
