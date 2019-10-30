@@ -90,10 +90,8 @@ func InitGUI() {
 		player1 = [9]bool{false, false, false, false, false, false, false, false, false}
 		player2 = [9]bool{false, false, false, false, false, false, false, false, false}
 
-		// Define the variable for telling that we won.
-		won := false
-
-		for won == false {
+		// The main for loop where our game plays from. We want to always loop until we manually break it, so we do it while 1 < 2 :).
+		for 1 < 2 {
 
 			// Ugly switch statement to set the icons for our buttons.
 			if clicked[0] == 1 {
@@ -188,13 +186,11 @@ func InitGUI() {
 				index++
 			}
 
-			// Just print some debug info to the terminal, because we stall the gui otherwice.
-			fmt.Println("Player 1:", player1, "Player 2:", player2)
+			// Just run the print command so we don't stall the gui. Avoid printing anything, it's just useless memory usage.
+			fmt.Println("")
 
-			// Check if our index is bigger than 9, because then we are finished. If the index is bigger or equal to 4, we can check for a win.
-			if index > 9 {
-				break
-			} else if index >= 4 {
+			// Check if index is bigger or equal to 5, because it's the earliest time we can win. If index is 9, we have a tie and nobody won.
+      if index >= 5 {
 				if CheckWon(player1) {
 					// Show a dialogue informing the first player that he won!
 					message := dialog.NewInformation("Player 1 has won!", "Congratulations to player 1 for winning.", window)
@@ -205,13 +201,13 @@ func InitGUI() {
 					message := dialog.NewInformation("Player 2 has won!", "Congratulations to player 2 for winning.", window)
 					message.Show()
 					break
-				} else if index == 9 {
-					message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
-					message.Show()
-					break
 				}
-			}
-
+			} else if index == 9 {
+        // It is a tie if the game hasn't ended before index reaches 9.
+				message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
+				message.Show()
+				break
+      }
 		}
 	}))
 
