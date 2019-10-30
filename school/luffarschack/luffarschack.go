@@ -10,14 +10,20 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// Global variable for defining if a button is pressed or not.
-var clicked = [9]int8{}
+// Define all our global variables. We use these in order to not redeclare them every time we start the game.
+var (
+  // Variable for defining if a button is pressed or not. Redefined on every press of the button.
+  clicked = [9]bool{}
 
-// Global variables for which parts the players own. Index 0 is the first tile and index 8 is the ninth tile.
-var player1 = [9]bool{false, false, false, false, false, false, false, false, false}
-var player2 = [9]bool{false, false, false, false, false, false, false, false, false}
+  // Variables for which parts the players own. Index 0 is the first tile and index 8 is the ninth tile.
+  player1 = [9]bool{}
+  player2 = [9]bool{}
 
-// Our global index for defining if it's player one or player two's turn to play.
+  // Variable to handle if buttons are already pressed. Does not change on button press.
+  pressed = [9]bool{}
+)
+
+// Our global index for defining if it's player one or player two's turn to play. Use 8bit variable to save on memory allocation.
 var index int8
 
 // InitGUI starts up the whole interface for out program.
@@ -37,42 +43,37 @@ func InitGUI() {
 	// Define all variables we need for the buttons.
 	var (
 		button1 = widget.NewButton("", func() {
-			clicked[0] = 1
+			clicked[0] = true
 		})
 		button2 = widget.NewButton("", func() {
-			clicked[1] = 1
+			clicked[1] = true
 		})
 		button3 = widget.NewButton("", func() {
-			clicked[2] = 1
+			clicked[2] = true
 		})
 		button4 = widget.NewButton("", func() {
-			clicked[3] = 1
+			clicked[3] = true
 		})
 		button5 = widget.NewButton("", func() {
-			clicked[4] = 1
+			clicked[4] = true
 		})
 		button6 = widget.NewButton("", func() {
-			clicked[5] = 1
+			clicked[5] = true
 		})
 		button7 = widget.NewButton("", func() {
-			clicked[6] = 1
+			clicked[6] = true
 		})
 		button8 = widget.NewButton("", func() {
-			clicked[7] = 1
+			clicked[7] = true
 		})
 		button9 = widget.NewButton("", func() {
-			clicked[8] = 1
+			clicked[8] = true
 		})
 	)
 
 	// Append a start button to our vertical box.
 	vbox.Append(widget.NewButton("Click to start", func() {
-		// Make sure to clear all earlier button presses before proceeding.
-		for i := range clicked {
-			clicked[i] = 0
-		}
-
-		// Also remove all our icons before proceeding if we are restarting.
+		// Make sure that all buttons are reset before we start.
 		button1.SetIcon(nil)
 		button2.SetIcon(nil)
 		button3.SetIcon(nil)
@@ -86,16 +87,18 @@ func InitGUI() {
 		// Clear the index to make sure that we start from scratch.
 		index = 0
 
-		// Clear the board information for each player.
+		// Clear the board information for each player, each button click and all buttons that have already been pressed.
 		player1 = [9]bool{false, false, false, false, false, false, false, false, false}
 		player2 = [9]bool{false, false, false, false, false, false, false, false, false}
+    clicked = [9]bool{false, false, false, false, false, false, false, false, false}
+    pressed = [9]bool{false, false, false, false, false, false, false, false, false}
 
 		// The main for loop where our game plays from. We want to always loop until we manually break it, so we do it while 1 < 2 :).
 		for 1 < 2 {
 
 			// Ugly switch statement to set the icons for our buttons.
-			if clicked[0] == 1 {
-				clicked[0]++
+			if clicked[0] && !pressed[0] {
+        clicked[0], pressed[0] = false, true
 				if index%2 == 0 {
 					button1.SetIcon(circle)
 					player1[0] = true
@@ -104,8 +107,8 @@ func InitGUI() {
 					player2[0] = true
 				}
 				index++
-			} else if clicked[1] == 1 {
-				clicked[1]++
+			} else if clicked[1] && !pressed[1] {
+				clicked[1], pressed[1] = false, true
 				if index%2 == 0 {
 					button2.SetIcon(circle)
 					player1[1] = true
@@ -114,8 +117,8 @@ func InitGUI() {
 					player2[1] = true
 				}
 				index++
-			} else if clicked[2] == 1 {
-				clicked[2]++
+			} else if clicked[2] && !pressed[2] {
+				clicked[2], pressed[2] = false, true
 				if index%2 == 0 {
 					button3.SetIcon(circle)
 					player1[2] = true
@@ -124,8 +127,8 @@ func InitGUI() {
 					player2[2] = true
 				}
 				index++
-			} else if clicked[3] == 1 {
-				clicked[3]++
+			} else if clicked[3] && !pressed[3] {
+				clicked[3], pressed[3] = false, true
 				if index%2 == 0 {
 					button4.SetIcon(circle)
 					player1[3] = true
@@ -134,8 +137,9 @@ func InitGUI() {
 					player2[3] = true
 				}
 				index++
-			} else if clicked[4] == 1 {
-				clicked[4]++
+			} else if clicked[4] && !pressed[4] {
+				clicked[4], pressed[4] = false, true
+        pressed[4] = true
 				if index%2 == 0 {
 					button5.SetIcon(circle)
 					player1[4] = true
@@ -144,8 +148,8 @@ func InitGUI() {
 					player2[4] = true
 				}
 				index++
-			} else if clicked[5] == 1 {
-				clicked[5]++
+			} else if clicked[5] && !pressed[5] {
+				clicked[5], pressed[5] = false, true
 				if index%2 == 0 {
 					button6.SetIcon(circle)
 					player1[5] = true
@@ -154,8 +158,8 @@ func InitGUI() {
 					player2[5] = true
 				}
 				index++
-			} else if clicked[6] == 1 {
-				clicked[6]++
+			} else if clicked[6] && !pressed[6] {
+				clicked[6], pressed[6] = false, true
 				if index%2 == 0 {
 					button7.SetIcon(circle)
 					player1[6] = true
@@ -164,8 +168,8 @@ func InitGUI() {
 					player2[6] = true
 				}
 				index++
-			} else if clicked[7] == 1 {
-				clicked[7]++
+			} else if clicked[7] && !pressed[7] {
+				clicked[7], pressed[7] = false, true
 				if index%2 == 0 {
 					button8.SetIcon(circle)
 					player1[7] = true
@@ -174,8 +178,8 @@ func InitGUI() {
 					player2[7] = true
 				}
 				index++
-			} else if clicked[8] == 1 {
-				clicked[8]++
+			} else if clicked[8] && !pressed[8] {
+				clicked[8], pressed[8] = false, true
 				if index%2 == 0 {
 					button9.SetIcon(circle)
 					player1[8] = true
@@ -190,8 +194,13 @@ func InitGUI() {
 			fmt.Println("")
 
 			// Check if index is bigger or equal to 5, because it's the earliest time we can win. If index is 9, we have a tie and nobody won.
-      if index >= 5 {
-				if CheckWon(player1) {
+      if index == 9 {
+        // It is a tie if the game hasn't ended before index reaches 9.
+				message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
+				message.Show()
+				break
+      } else if index >= 5 {
+        if CheckWon(player1) {
 					// Show a dialogue informing the first player that he won!
 					message := dialog.NewInformation("Player 1 has won!", "Congratulations to player 1 for winning.", window)
 					message.Show()
@@ -202,11 +211,6 @@ func InitGUI() {
 					message.Show()
 					break
 				}
-			} else if index == 9 {
-        // It is a tie if the game hasn't ended before index reaches 9.
-				message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
-				message.Show()
-				break
       }
 		}
 	}))
