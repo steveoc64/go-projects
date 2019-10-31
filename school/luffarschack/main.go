@@ -12,19 +12,19 @@ import (
 
 // Define all our global variables. We use these in order to not redeclare them every time we start the game.
 var (
-  // Variable for defining if a button is pressed or not. Redefined on every press of the button.
-  clicked = [9]bool{}
+	// Variable for defining if a button is pressed or not. Redefined on every press of the button.
+	clicked = [9]bool{}
 
-  // Variables for which parts the players own. Index 0 is the first tile and index 8 is the ninth tile.
-  player1 = [9]bool{}
-  player2 = [9]bool{}
+	// Variables for which parts the players own. Index 0 is the first tile and index 8 is the ninth tile.
+	player1 = [9]bool{}
+	player2 = [9]bool{}
 
-  // Variable to handle if buttons are already pressed. Does not change on button press.
-  pressed = [9]bool{}
+	// Variable to handle if buttons are already pressed. Does not change on button press.
+	pressed = [9]bool{}
+
+	// Index for defining if it's player one or player two's turn to play. Use 8bit variable to save on memory allocation.
+	index uint8
 )
-
-// Our global index for defining if it's player one or player two's turn to play. Use 8bit variable to save on memory allocation.
-var index int8
 
 // InitGUI starts up the whole interface for out program.
 func InitGUI() {
@@ -90,15 +90,15 @@ func InitGUI() {
 		// Clear the board information for each player, each button click and all buttons that have already been pressed.
 		player1 = [9]bool{false, false, false, false, false, false, false, false, false}
 		player2 = [9]bool{false, false, false, false, false, false, false, false, false}
-    clicked = [9]bool{false, false, false, false, false, false, false, false, false}
-    pressed = [9]bool{false, false, false, false, false, false, false, false, false}
+		clicked = [9]bool{false, false, false, false, false, false, false, false, false}
+		pressed = [9]bool{false, false, false, false, false, false, false, false, false}
 
-		// The main for loop where our game plays from. We want to always loop until we manually break it, so we do it while 1 < 2 :).
-		for 1 < 2 {
+		// The main for loop where our game plays from. We want to always loop until we manually break it.
+		for {
 
 			// Ugly switch statement to set the icons for our buttons.
 			if clicked[0] && !pressed[0] {
-        clicked[0], pressed[0] = false, true
+				pressed[0] = true
 				if index%2 == 0 {
 					button1.SetIcon(circle)
 					player1[0] = true
@@ -108,7 +108,7 @@ func InitGUI() {
 				}
 				index++
 			} else if clicked[1] && !pressed[1] {
-				clicked[1], pressed[1] = false, true
+				pressed[1] = true
 				if index%2 == 0 {
 					button2.SetIcon(circle)
 					player1[1] = true
@@ -118,7 +118,7 @@ func InitGUI() {
 				}
 				index++
 			} else if clicked[2] && !pressed[2] {
-				clicked[2], pressed[2] = false, true
+				pressed[2] = true
 				if index%2 == 0 {
 					button3.SetIcon(circle)
 					player1[2] = true
@@ -128,7 +128,7 @@ func InitGUI() {
 				}
 				index++
 			} else if clicked[3] && !pressed[3] {
-				clicked[3], pressed[3] = false, true
+				pressed[3] = true
 				if index%2 == 0 {
 					button4.SetIcon(circle)
 					player1[3] = true
@@ -138,8 +138,8 @@ func InitGUI() {
 				}
 				index++
 			} else if clicked[4] && !pressed[4] {
-				clicked[4], pressed[4] = false, true
-        pressed[4] = true
+				pressed[4] = true
+				pressed[4] = true
 				if index%2 == 0 {
 					button5.SetIcon(circle)
 					player1[4] = true
@@ -149,7 +149,7 @@ func InitGUI() {
 				}
 				index++
 			} else if clicked[5] && !pressed[5] {
-				clicked[5], pressed[5] = false, true
+				pressed[5] = true
 				if index%2 == 0 {
 					button6.SetIcon(circle)
 					player1[5] = true
@@ -159,7 +159,7 @@ func InitGUI() {
 				}
 				index++
 			} else if clicked[6] && !pressed[6] {
-				clicked[6], pressed[6] = false, true
+				pressed[6] = true
 				if index%2 == 0 {
 					button7.SetIcon(circle)
 					player1[6] = true
@@ -169,7 +169,7 @@ func InitGUI() {
 				}
 				index++
 			} else if clicked[7] && !pressed[7] {
-				clicked[7], pressed[7] = false, true
+				pressed[7] = true
 				if index%2 == 0 {
 					button8.SetIcon(circle)
 					player1[7] = true
@@ -179,7 +179,7 @@ func InitGUI() {
 				}
 				index++
 			} else if clicked[8] && !pressed[8] {
-				clicked[8], pressed[8] = false, true
+				pressed[8] = true
 				if index%2 == 0 {
 					button9.SetIcon(circle)
 					player1[8] = true
@@ -188,19 +188,19 @@ func InitGUI() {
 					player2[8] = true
 				}
 				index++
+			} else {
+				// Just run the print command so we don't stall the gui when nothing happends in the loop. Avoid printing anything, it's just useless memory usage.
+				fmt.Print("")
 			}
 
-			// Just run the print command so we don't stall the gui. Avoid printing anything, it's just useless memory usage.
-			fmt.Println("")
-
 			// Check if index is bigger or equal to 5, because it's the earliest time we can win. If index is 9, we have a tie and nobody won.
-      if index == 9 {
-        // It is a tie if the game hasn't ended before index reaches 9.
+			if index == 9 {
+				// It is a tie if the game hasn't ended before index reaches 9.
 				message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
 				message.Show()
 				break
-      } else if index >= 5 {
-        if CheckWon(player1) {
+			} else if index >= 5 {
+				if CheckWon(player1) {
 					// Show a dialogue informing the first player that he won!
 					message := dialog.NewInformation("Player 1 has won!", "Congratulations to player 1 for winning.", window)
 					message.Show()
@@ -211,7 +211,7 @@ func InitGUI() {
 					message.Show()
 					break
 				}
-      }
+			}
 		}
 	}))
 
@@ -223,7 +223,7 @@ func InitGUI() {
 	// Add our vertical box to be viewed.
 	window.SetContent(vbox)
 
-	// Set the size to something small but good looking and usable.
+	// Set a sane default for the window size.
 	window.Resize(fyne.NewSize(400, 100))
 
 	// Show all of our set content and run the gui.
@@ -237,24 +237,25 @@ func main() {
 // CheckWon checks all possible combinations for winning.
 func CheckWon(player [9]bool) bool {
 
-	// All possible combinations for winning.
-	if player[0] && player[1] && player[2] {
+	// Switch statement with all possible combinations for winning.
+	switch {
+	case player[0] && player[1] && player[2]:
 		return true
-	} else if player[0] && player[3] && player[6] {
+	case player[0] && player[3] && player[6]:
 		return true
-	} else if player[0] && player[3] && player[5] {
+	case player[0] && player[3] && player[5]:
 		return true
-	} else if player[6] && player[7] && player[8] {
+	case player[6] && player[7] && player[8]:
 		return true
-	} else if player[2] && player[5] && player[8] {
+	case player[2] && player[5] && player[8]:
 		return true
-	} else if player[0] && player[4] && player[8] {
+	case player[0] && player[4] && player[8]:
 		return true
-	} else if player[2] && player[4] && player[6] {
+	case player[2] && player[4] && player[6]:
 		return true
-	} else if player[1] && player[4] && player[7] {
+	case player[1] && player[4] && player[7]:
 		return true
-	} else if player[3] && player[4] && player[5] {
+	case player[3] && player[4] && player[5]:
 		return true
 	}
 
