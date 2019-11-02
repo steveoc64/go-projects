@@ -147,7 +147,7 @@ Luffarschack
 		}
 	}))
 
-	// Append each new row as a new container with gird layout and three buttons.
+	// Append each new row as a new container with grid layout and three buttons.
 	vbox.Append(fyne.NewContainerWithLayout(layout.NewGridLayout(3), button1, button2, button3))
 	vbox.Append(fyne.NewContainerWithLayout(layout.NewGridLayout(3), button4, button5, button6))
 	vbox.Append(fyne.NewContainerWithLayout(layout.NewGridLayout(3), button7, button8, button9))
