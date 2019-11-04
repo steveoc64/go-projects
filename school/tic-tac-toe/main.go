@@ -87,7 +87,7 @@ func InitGUI() {
 		button7.SetIcon(nil)
 		button8.SetIcon(nil)
 		button9.SetIcon(nil)
-Luffarschack
+
 		// Clear the index to make sure that we start from scratch.
 		index = 0
 
