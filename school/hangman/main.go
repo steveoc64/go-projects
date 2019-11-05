@@ -35,12 +35,26 @@ func InitGUI() {
 
 	vbox.Append(start)
 
+	validCharacters := widget.NewLabelWithStyle("Geodimeter", fyne.TextAlignCenter, fyne.TextStyle{Bold: true})
+
+	triedCharacters := widget.NewLabelWithStyle("F, S, K", fyne.TextAlignLeading, fyne.TextStyle{Monospace: true, Italic: true})
+
+	entry := widget.NewEntry()
+
+	submit := widget.NewButton("Submit", func() {
+
+	})
+
+	vbox.Append(validCharacters)
+	vbox.Append(triedCharacters)
+	vbox.Append(fyne.NewContainerWithLayout(layout.NewGridLayout(2), entry, submit))
+
 	// Add our vertical box to be viewed.
 	window.SetContent(fyne.NewContainerWithLayout(layout.NewBorderLayout(nil, nil, nil, nil), vbox, display))
 
 	// Set a sane default for the window size and set it to not be user resizable.
 	window.Resize(fyne.NewSize(400, 500))
-	window.SetFixedSize(true)
+	//window.SetFixedSize(true)
 
 	// Show all of our set content and run the gui.
 	window.ShowAndRun()
