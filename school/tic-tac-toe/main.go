@@ -125,21 +125,20 @@ func InitGUI() {
 			}
 
 			// Check if index is bigger or equal to 5, because it's the earliest time we can win. If index is 9, we have a tie and nobody won.
-			if index == 9 {
-				// It is a tie if the game hasn't ended before index reaches 9.
-				message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
-				message.Show()
-				break
-			} else if index >= 5 {
+			if index >= 5 {
 				if CheckWon(player1) {
 					// Show a dialogue informing the first player that he won!
 					message := dialog.NewInformation("Player 1 has won!", "Congratulations to player 1 for winning.", window)
-					message.Show() // Need to have a return value so we wait for the function to complete fully before continuing.
-
+					message.Show()
 					break
 				} else if CheckWon(player2) {
 					// Show a dialogue informing the second player that he won!
 					message := dialog.NewInformation("Player 2 has won!", "Congratulations to player 2 for winning.", window)
+					message.Show()
+					break
+				} else if index == 9 {
+					// It is a tie if the game hasn't ended before index reaches 9.
+					message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
 					message.Show()
 					break
 				}
@@ -162,7 +161,7 @@ func InitGUI() {
 	window.ShowAndRun()
 }
 
-// PressHandler Handles the press of a button and updates button icons and player arrays accordingly.
+// PressHandler handles the press of a button and updates button icons and player arrays accordingly.
 func PressHandler(button *widget.Button, num, player uint8) uint8 {
 	// Check if player one or two presses the button and handle accordingly.
 	if player%2 == 0 {
