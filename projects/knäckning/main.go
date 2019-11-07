@@ -5,12 +5,12 @@ import "fmt"
 
 // Column represent the values for the column to calculate buckling of a column.
 type Column struct {
-	YieldStrength    float64    // N/mm2
-	ElasticModulus   float64    // N/mm2
-	Length           float64    // mm
-	FasteningCase    Fastening  // only one value should be positive.
-	ColumnType       ColumnType // the type of column.
-	CrossSectionData CrossSectionData
+	YieldStrength  float64      // N/mm2
+	ElasticModulus float64      // N/mm2
+	Length         float64      // mm
+	EulerCase      Fastening    // Which fastening case that is used. (Only one should be passed as true and the second one will be used if none is provided)
+	ColumnType     Type         // Defines what type of column that we are working with. (Only one should be passed as true)
+	CrossSection   CrossSection // Defines the dimensional data for our cross section.
 }
 
 // Fastening provides the three fastening cases.
@@ -21,59 +21,59 @@ type Fastening struct {
 	Forth  bool // Imovable on both sides of the column.
 }
 
-// ColumnType type defines what type of columnwe are working with.
-type ColumnType struct {
-	Circle          bool
-	CircularPipe    bool
-	Rectangle       bool
-	RectangularPipe bool
+// Type defines what type of column are working with.
+type Type struct {
+	Circle          bool // Tells that we have a circle.
+	CircularPipe    bool // Tells that we have a circular pipe.
+	Rectangle       bool // Tells that we have a rectangle.
+	RectangularPipe bool // Tells that we have a rectangular pipe.
 }
 
-// CrossSectionData houses all the stuff like Diameter and cross section lengths.
-type CrossSectionData struct {
-	CircleDiameter         float64
-	OuterCircleDiamater    float64
-	InnerCircleDiameter    float64
-	RectangleSideLong      float64
-	RectangleSideShort     float64
-	RectangleWallThickness float64
+// CrossSection houses all the stuff like Diameter and cross section lengths.
+type CrossSection struct {
+	CircleDiameter      float64
+	OuterCircleDiameter float64
+	InnerCircleDiameter float64
+	RectSideLong        float64
+	RectSideShort       float64
+	RectWallThickness   float64
 }
 
 // checkValidBuckling is a private function to check if the buckling theory is valid. Make method or something later.
 func checkValidBuckling(column *Column) bool {
 
-	// Check what case should use for the free buckling length.
+	// Check what case should use for the free buckling length. Use case two when no case is provided.
 	var BucklingLength float64
-	if column.FasteningCase.First {
+	if column.EulerCase.First {
 		BucklingLength = 2 * column.Length
-	} else if column.FasteningCase.Second {
-		BucklingLength = column.Length
-	} else if column.FasteningCase.Third {
+	} else if column.EulerCase.Third {
 		BucklingLength = 0.7 * column.Length
-	} else if column.FasteningCase.Forth {
+	} else if column.EulerCase.Forth {
 		BucklingLength = 0.5 * column.Length
+	} else {
+		BucklingLength = column.Length
 	}
 
 	var Imin float64
 	if column.ColumnType.Circle {
-		Imin = (Pi * Pow(column.CrossSectionData.CircleDiameter, 4)) / 64
+		Imin = (Pi * Pow(column.CrossSection.CircleDiameter, 4)) / 64
 	} else if column.ColumnType.CircularPipe {
-		Imin = (Pi / 64) * (Pow(column.CrossSectionData.OuterCircleDiamater, 4) - Pow(column.CrossSectionData.InnerCircleDiameter, 4))
+		Imin = (Pi / 64) * (Pow(column.CrossSection.OuterCircleDiameter, 4) - Pow(column.CrossSection.InnerCircleDiameter, 4))
 	} else if column.ColumnType.Rectangle {
-		Imin = (Pow(column.CrossSectionData.RectangleSideShort, 3) * column.CrossSectionData.RectangleSideLong) / 12
+		Imin = (Pow(column.CrossSection.RectSideShort, 3) * column.CrossSection.RectSideLong) / 12
 	} else if column.ColumnType.RectangularPipe {
-		Imin = ((Pow(column.CrossSectionData.RectangleSideShort, 3) * column.CrossSectionData.RectangleSideLong) / 12) - ((Pow(column.CrossSectionData.RectangleSideShort-2*column.CrossSectionData.RectangleWallThickness, 3)*column.CrossSectionData.RectangleSideLong - (2 * column.CrossSectionData.RectangleWallThickness)) / 12)
+		Imin = ((Pow(column.CrossSection.RectSideShort, 3) * column.CrossSection.RectSideLong) / 12) - ((Pow(column.CrossSection.RectSideShort-2*column.CrossSection.RectWallThickness, 3)*column.CrossSection.RectSideLong - (2 * column.CrossSection.RectWallThickness)) / 12)
 	}
 
 	var Area float64
 	if column.ColumnType.Circle {
-		Area = Pi * Pow(0.5*column.CrossSectionData.CircleDiameter, 2)
+		Area = Pi * Pow(0.5*column.CrossSection.CircleDiameter, 2)
 	} else if column.ColumnType.CircularPipe {
-		Area = Pi * (Pow(0.5*column.CrossSectionData.OuterCircleDiamater, 2) - Pow(0.5*column.CrossSectionData.OuterCircleDiamater, 2))
+		Area = Pi * (Pow(0.5*column.CrossSection.OuterCircleDiameter, 2) - Pow(0.5*column.CrossSection.InnerCircleDiameter, 2))
 	} else if column.ColumnType.Rectangle {
-		Area = column.CrossSectionData.RectangleSideShort * column.CrossSectionData.RectangleSideLong
+		Area = column.CrossSection.RectSideShort * column.CrossSection.RectSideLong
 	} else if column.ColumnType.RectangularPipe {
-		Area = column.CrossSectionData.RectangleSideShort*column.CrossSectionData.RectangleSideLong - (column.CrossSectionData.RectangleSideShort-2*column.CrossSectionData.RectangleWallThickness)*(column.CrossSectionData.RectangleSideLong-2*column.CrossSectionData.RectangleWallThickness)
+		Area = column.CrossSection.RectSideShort*column.CrossSection.RectSideLong - (column.CrossSection.RectSideShort-2*column.CrossSection.RectWallThickness)*(column.CrossSection.RectSideLong-2*column.CrossSection.RectWallThickness)
 	}
 
 	Lambda := BucklingLength / Sqrt(Imin/Area)
@@ -87,6 +87,6 @@ func checkValidBuckling(column *Column) bool {
 }
 
 func main() {
-	stang := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400, FasteningCase: Fastening{Second: true}, ColumnType: ColumnType{Rectangle: true}, CrossSectionData: CrossSectionData{RectangleSideShort: 30, RectangleSideLong: 50, RectangleWallThickness: 2.6}}
+	stang := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400, EulerCase: Fastening{Second: true}, ColumnType: Type{Rectangle: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}}
 	fmt.Println(checkValidBuckling(stang))
 }
