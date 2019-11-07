@@ -1,6 +1,7 @@
 package main
 
 import . "math"
+import "fmt"
 
 // Column represent the values for the column to calculate buckling of a column.
 type Column struct {
@@ -86,5 +87,6 @@ func checkValidBuckling(column *Column) bool {
 }
 
 func main() {
-	stang := Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400}
+	stang := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400, FasteningCase: Fastening{Second: true}, ColumnType: ColumnType{Rectangle: true}, CrossSectionData: CrossSectionData{RectangleSideShort: 30, RectangleSideLong: 50, RectangleWallThickness: 2.6}}
+	fmt.Println(checkValidBuckling(stang))
 }
