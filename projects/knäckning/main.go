@@ -21,10 +21,10 @@ type Column struct {
 	CrossSection CrossSection // Defines the dimensional data for our cross section.
 
 	// The members below won't need to be entered, they will be calculated from other data if not passed to the type:
-	BucklingLength float64
-	Area           float64
-	Imin           float64
-	BucklingForce  float64
+	BucklingLength float64 // mm
+	Area           float64 // mm2
+	Imin           float64 // mm4
+	BucklingForce  float64 // N
 }
 
 // Fastening provides the three fastening cases.
@@ -45,12 +45,12 @@ type Type struct {
 
 // CrossSection houses all the stuff like Diameter and cross section lengths.
 type CrossSection struct {
-	CircleDiameter      float64
-	OuterCircleDiameter float64
-	InnerCircleDiameter float64
-	RectSideLong        float64
-	RectSideShort       float64
-	RectWallThickness   float64
+	CircleDiameter      float64 // mm
+	OuterCircleDiameter float64 // mm
+	InnerCircleDiameter float64 // mm
+	RectSideLong        float64 // mm
+	RectSideShort       float64 // mm
+	RectWallThickness   float64 // mm
 }
 
 // CheckValidBuckling checks if the can use the bucklign theory.
