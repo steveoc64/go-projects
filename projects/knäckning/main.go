@@ -143,14 +143,14 @@ func (c *Column) Buckling() (bool, float64, error) {
 	return true, BucklingSafetyFactor, nil
 }
 
-// DegreesToRadians converts degrees to radians for tricionometric functions in the math package.
-func DegreesToRadians(degrees float64) float64 {
+// DegToRad converts degrees to radians for tricionometric functions in the math package.
+func DegToRad(degrees float64) float64 {
 	return math.Pi * (degrees / 180)
 }
 
 func main() {
 	horizontal := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400, EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularTube: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 10000}
-	sideways := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 1200 / math.Cos(DegreesToRadians(45)), EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularTube: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 5 * math.Sqrt2 * 1000}
+	sideways := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 1200 / math.Cos(DegToRad(45)), EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularTube: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 5 * math.Sqrt2 * 1000}
 
 	first, sec1, _ := horizontal.Buckling()
 	second, sec2, _ := sideways.Buckling()
