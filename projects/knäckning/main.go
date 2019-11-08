@@ -76,7 +76,7 @@ func (c Column) CheckValidBuckling() bool {
 }
 
 // Buckling calculates weather a given column will buckle and break.
-func Buckling(c *Column) (bool, float64, error) {
+func (c *Column) Buckling() (bool, float64, error) {
 
 	if c.ColumnForce == 0 || c.ElasticModulus == 0 || c.Length == 0 {
 		return false, 0, errors.New("you need to provide all the given data")
@@ -152,8 +152,8 @@ func main() {
 	horizontal := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400, EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularTube: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 10000}
 	sideways := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 1200 / math.Cos(DegreesToRadians(45)), EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularTube: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 5 * math.Sqrt2 * 1000}
 
-	first, sec1, _ := Buckling(horizontal)
-	second, sec2, _ := Buckling(sideways)
+	first, sec1, _ := horizontal.Buckling()
+	second, sec2, _ := sideways.Buckling()
 
 	fmt.Println("Den raka stången i mitten kommer knäckas:", first, "\nMed en säkerhet på:", sec1)
 	fmt.Println("\nDen vinklade stången på sidan kommer knäckas:", second, "\nMed en säkerhet på:", sec2)
