@@ -25,6 +25,8 @@ type Column struct {
 	Area           float64 // mm2
 	Imin           float64 // mm4
 	BucklingForce  float64 // N
+	Lambda         float64
+	LambdaZero     float64
 }
 
 // Fastening provides the three fastening cases.
@@ -56,13 +58,17 @@ type CrossSection struct {
 // CheckValidBuckling checks if the can use the bucklign theory.
 func (c Column) CheckValidBuckling() bool {
 	// Calulate the lambda number for our c.
-	Lambda := c.BucklingLength / math.Sqrt(c.Imin/c.Area)
+	if c.Lambda == 0 {
+		c.Lambda = c.BucklingLength / math.Sqrt(c.Imin/c.Area)
+	}
 
 	// Calculate the lowest possible lambda number for our c.
-	LambdaZero := math.Sqrt((math.Pi * math.Pi * c.ElasticModulus) / (0.99 * c.YieldStrength))
+	if c.LambdaZero == 0 {
+		c.LambdaZero = math.Sqrt((math.Pi * math.Pi * c.ElasticModulus) / (0.99 * c.YieldStrength))
+	}
 
 	// Return true if Lambda is bigger than LambdaZero, that means we can use Eulers buckling theories.
-	if Lambda > LambdaZero {
+	if c.Lambda > c.LambdaZero {
 		return true
 	}
 
