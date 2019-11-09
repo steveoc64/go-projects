@@ -25,8 +25,8 @@ type Column struct {
 	Area           float64 // mm2
 	Imin           float64 // mm4
 	BucklingForce  float64 // N
-	Lambda         float64
-	LambdaZero     float64
+	Lambda         float64 // No unit.
+	LambdaZero     float64 // No unit.
 }
 
 // Fastening provides the three fastening cases.
@@ -40,9 +40,9 @@ type Fastening struct {
 // Type defines what type of column are working with.
 type Type struct {
 	Circle          bool // Tells that we have a circle.
-	Pipe            bool // Tells that we have a pipe.
+	CircularPipe    bool // Tells that we have a circular pipe.
 	Rectangle       bool // Tells that we have a rectangle.
-	RectangularTube bool // Tells that we have a rectangular pipe.
+	RectangularPipe bool // Tells that we have a rectangular pipe.
 }
 
 // CrossSection houses all the stuff like Diameter and cross section lengths.
@@ -76,10 +76,10 @@ func (c *Column) CheckValidBuckling() bool {
 }
 
 // Buckling calculates weather a given column will buckle and break.
-func (c *Column) Buckling() (bool, float64, error) {
+func (c *Column) Buckling() (bool, error) {
 
 	if c.ColumnForce == 0 || c.ElasticModulus == 0 || c.Length == 0 {
-		return false, 0, errors.New("you need to provide all the given data")
+		return false, errors.New("you need to provide all the given data")
 	}
 
 	// Check what case should use for the free buckling length. Use case two when no case is provided.
@@ -99,11 +99,11 @@ func (c *Column) Buckling() (bool, float64, error) {
 	if c.Imin == 0 {
 		if c.ColumnType.Circle {
 			c.Imin = (math.Pi * math.Pow(c.CrossSection.CircleDiameter, 4)) / 64
-		} else if c.ColumnType.Pipe {
+		} else if c.ColumnType.CircularPipe {
 			c.Imin = (math.Pi / 64) * (math.Pow(c.CrossSection.OuterCircleDiameter, 4) - math.Pow(c.CrossSection.InnerCircleDiameter, 4))
 		} else if c.ColumnType.Rectangle {
 			c.Imin = (math.Pow(c.CrossSection.RectSideShort, 3) * c.CrossSection.RectSideLong) / 12
-		} else if c.ColumnType.RectangularTube {
+		} else if c.ColumnType.RectangularPipe {
 			c.Imin = ((math.Pow(c.CrossSection.RectSideShort, 3) * c.CrossSection.RectSideLong) - (math.Pow(c.CrossSection.RectSideShort-2*c.CrossSection.RectWallThickness, 3) * (c.CrossSection.RectSideLong - (2 * c.CrossSection.RectWallThickness)))) / 12
 		}
 	}
@@ -112,18 +112,18 @@ func (c *Column) Buckling() (bool, float64, error) {
 	if c.Area == 0 {
 		if c.ColumnType.Circle {
 			c.Area = math.Pi * math.Pow(0.5*c.CrossSection.CircleDiameter, 2)
-		} else if c.ColumnType.Pipe {
+		} else if c.ColumnType.CircularPipe {
 			c.Area = math.Pi * (math.Pow(0.5*c.CrossSection.OuterCircleDiameter, 2) - math.Pow(0.5*c.CrossSection.InnerCircleDiameter, 2))
 		} else if c.ColumnType.Rectangle {
 			c.Area = c.CrossSection.RectSideShort * c.CrossSection.RectSideLong
-		} else if c.ColumnType.RectangularTube {
+		} else if c.ColumnType.RectangularPipe {
 			c.Area = c.CrossSection.RectSideShort*c.CrossSection.RectSideLong - (c.CrossSection.RectSideShort-2*c.CrossSection.RectWallThickness)*(c.CrossSection.RectSideLong-2*c.CrossSection.RectWallThickness)
 		}
 	}
 
 	// Check if it is possible to actually use buckling theories of the great Euler.
 	if !c.CheckValidBuckling() {
-		return false, 0, errors.New("we cant use Eulers theory of buckling in this example")
+		return false, errors.New("we cant use Eulers theory of buckling in this example")
 	}
 
 	// Calculate the force at which the column will buckle and break.
@@ -132,15 +132,15 @@ func (c *Column) Buckling() (bool, float64, error) {
 	}
 
 	// Calculate the safety factor for the buckling.
-	BucklingSafetyFactor := c.BucklingForce / c.ColumnForce
+	c.BucklingSafety = c.BucklingForce / c.ColumnForce
 
 	// Return false if the safety is over 1.
-	if BucklingSafetyFactor > 1 {
-		return false, BucklingSafetyFactor, nil
+	if c.BucklingSafety > 1 {
+		return false, nil
 	}
 
 	// Return true when the safety is under 1.
-	return true, BucklingSafetyFactor, nil
+	return true, nil
 }
 
 // DegToRad converts degrees to radians for tricionometric functions in the math package.
@@ -148,14 +148,20 @@ func DegToRad(degrees float64) float64 {
 	return math.Pi * (degrees / 180)
 }
 
+// RequiredImin returns the required Imin to get a specified buckling safety.
+func (c *Column) RequiredImin(safety float64) float64 {
+	return (safety * (math.Pow(c.BucklingLength, 2) * c.ColumnForce)) / (math.Pow(math.Pi, 2) * c.ElasticModulus)
+}
+
 func main() {
-	horizontal := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400, EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularTube: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 10000}
-	sideways := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 1200 / math.Cos(DegToRad(45)), EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularTube: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 5 * math.Sqrt2 * 1000}
+	horizontal := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400, EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularPipe: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 10000}
+	sideways := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 1200 / math.Cos(DegToRad(45)), EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularPipe: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 5 * math.Sqrt2 * 1000}
 
-	first, sec1, _ := horizontal.Buckling()
-	second, sec2, _ := sideways.Buckling()
+	first, _ := horizontal.Buckling()
+	second, _ := sideways.Buckling()
 
-	fmt.Println("Den raka stången i mitten kommer knäckas:", first, "\nMed en säkerhet på:", sec1)
-	fmt.Println("\nDen vinklade stången på sidan kommer knäckas:", second, "\nMed en säkerhet på:", sec2)
-
+	fmt.Println("Den raka stången i mitten kommer knäckas:", first, "\nMed en säkerhet på:", horizontal.BucklingSafety)
+	fmt.Println("\nDen vinklade stången på sidan kommer knäckas:", second, "\nMed en säkerhet på:", sideways.BucklingSafety)
+	
+	fmt.Printf("\nImin som krävs för en säkerhet på %v: %v\nNuvarande Imin: %v\n", 2, horizontal.RequiredImin(2), horizontal.Imin)
 }
