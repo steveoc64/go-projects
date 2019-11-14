@@ -123,7 +123,7 @@ func (c *Column) Buckling() (bool, error) {
 
 	// Check if it is possible to actually use buckling theories of the great Euler.
 	if !c.CheckValidBuckling() {
-		return false, errors.New("we cant use Eulers theory of buckling in this example")
+		return false, errors.New("we cant use Eulers theory of buckling in this example. Lambda is not bigger than LambdaZero!")
 	}
 
 	// Calculate the force at which the column will buckle and break.
@@ -157,11 +157,18 @@ func main() {
 	horizontal := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400, EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularPipe: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 10000}
 	sideways := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 1200 / math.Cos(DegToRad(45)), EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularPipe: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 5 * math.Sqrt2 * 1000}
 
-	first, _ := horizontal.Buckling()
+	first, err := horizontal.Buckling()
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	second, _ := sideways.Buckling()
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	fmt.Println("Den raka stången i mitten kommer knäckas:", first, "\nMed en säkerhet på:", horizontal.BucklingSafety)
 	fmt.Println("\nDen vinklade stången på sidan kommer knäckas:", second, "\nMed en säkerhet på:", sideways.BucklingSafety)
-	
+
 	fmt.Printf("\nImin som krävs för en säkerhet på %v: %v\nNuvarande Imin: %v\n", 2, horizontal.RequiredImin(2), horizontal.Imin)
 }
