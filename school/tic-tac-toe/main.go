@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/dialog"
@@ -11,12 +10,11 @@ import (
 
 // Define all our global variables. We use these in order to not redeclare them every time we start the game.
 var (
-
 	// Variables for which parts the players own. Index 0 is the first tile and index 8 is the ninth tile.
 	player1 = [9]bool{}
 	player2 = [9]bool{}
 
-	// Variable to handle if buttons are already pressed. Does not change on button press.
+	// Variable to handle if buttons are already pressed.
 	pressed = [9]bool{}
 
 	// Index for defining if it's player one or player two's turn to play. Use 8bit variable to save on memory allocation.
@@ -103,9 +101,6 @@ func InitGUI() {
 		button8.SetIcon(nil)
 		button9.SetIcon(nil)
 
-		// Clear the index to make sure that we start from scratch.
-		index = 0
-
 		// Clear the board information for each player, each button click and all buttons that have already been pressed.
 		player1 = [9]bool{false, false, false, false, false, false, false, false, false}
 		player2 = [9]bool{false, false, false, false, false, false, false, false, false}
@@ -138,8 +133,6 @@ func InitGUI() {
 			case clicked == 8 && !pressed[8]:
 				PressHandler(button9, 8)
 			}
-
-			fmt.Println(index)
 
 			// Check if index is bigger or equal to 4, because it's the earliest time we can win. If index is 8, we have a tie and nobody won.
 			if index >= 4 {
