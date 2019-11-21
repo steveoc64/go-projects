@@ -150,7 +150,7 @@ func InitGUI() {
 	window.SetContent(container)
 
 	// Set a sane default for the window size.
-	window.Resize(fyne.NewSize(400, 100))
+	window.Resize(fyne.NewSize(400, 250))
 
 	// Show all of our set content and run the gui.
 	window.ShowAndRun()
