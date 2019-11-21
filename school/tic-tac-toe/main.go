@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/dialog"
@@ -12,8 +11,6 @@ import (
 
 // Define all our global variables. We use these in order to not redeclare them every time we start the game.
 var (
-	// Variable for defining if a button is pressed or not. Redefined on every press of the button.
-	clicked = [9]bool{}
 
 	// Variables for which parts the players own. Index 0 is the first tile and index 8 is the ninth tile.
 	player1 = [9]bool{}
@@ -41,34 +38,55 @@ func InitGUI() {
 	// Create the window for our user interface.
 	window := app.NewWindow("Tic-Tac-Toe")
 
-	// Create all our buttons tiles for the game.
+	// Set up a buffered channel for sending button presses.
+	channel := make(chan uint8, 9)
+
+	// Create all our buttons tiles for the game and send a button number to our channel on each press.
 	var (
 		button1 = widget.NewButton("", func() {
-			clicked[0] = true
+			if !pressed[0] {
+				channel <- 0
+			}
 		})
 		button2 = widget.NewButton("", func() {
-			clicked[1] = true
+			if !pressed[1] {
+				channel <- 1
+			}
 		})
 		button3 = widget.NewButton("", func() {
-			clicked[2] = true
+			if !pressed[2] {
+				channel <- 2
+			}
 		})
 		button4 = widget.NewButton("", func() {
-			clicked[3] = true
+			if !pressed[3] {
+				channel <- 3
+			}
 		})
 		button5 = widget.NewButton("", func() {
-			clicked[4] = true
+			if !pressed[4] {
+				channel <- 4
+			}
 		})
 		button6 = widget.NewButton("", func() {
-			clicked[5] = true
+			if !pressed[5] {
+				channel <- 5
+			}
 		})
 		button7 = widget.NewButton("", func() {
-			clicked[6] = true
+			if !pressed[6] {
+				channel <- 6
+			}
 		})
 		button8 = widget.NewButton("", func() {
-			clicked[7] = true
+			if !pressed[7] {
+				channel <- 7
+			}
 		})
 		button9 = widget.NewButton("", func() {
-			clicked[8] = true
+			if !pressed[8] {
+				channel <- 8
+			}
 		})
 	)
 
@@ -91,38 +109,40 @@ func InitGUI() {
 		// Clear the board information for each player, each button click and all buttons that have already been pressed.
 		player1 = [9]bool{false, false, false, false, false, false, false, false, false}
 		player2 = [9]bool{false, false, false, false, false, false, false, false, false}
-		clicked = [9]bool{false, false, false, false, false, false, false, false, false}
 		pressed = [9]bool{false, false, false, false, false, false, false, false, false}
 
-		// The main for loop where our game plays from. We want to always loop until we manually break it.
-		for {
+		// The main loop for the game.
+		for index = 0; index < 9; index++ {
+
+			// Sleep the loop until we get a number in the channel.
+			clicked := <-channel
 
 			// Handles all our button presses during the play time.
 			switch {
-			case clicked[0] && !pressed[0]:
-				index = PressHandler(button1, 0, index)
-			case clicked[1] && !pressed[1]:
-				index = PressHandler(button2, 1, index)
-			case clicked[2] && !pressed[2]:
-				index = PressHandler(button3, 2, index)
-			case clicked[3] && !pressed[3]:
-				index = PressHandler(button4, 3, index)
-			case clicked[4] && !pressed[4]:
-				index = PressHandler(button5, 4, index)
-			case clicked[5] && !pressed[5]:
-				index = PressHandler(button6, 5, index)
-			case clicked[6] && !pressed[6]:
-				index = PressHandler(button7, 6, index)
-			case clicked[7] && !pressed[7]:
-				index = PressHandler(button8, 7, index)
-			case clicked[8] && !pressed[8]:
-				index = PressHandler(button9, 8, index)
-			default:
-				fmt.Print("") // Just run empty print command so we don't stall the gui when nothing happends in the loop.
+			case clicked == 0 && !pressed[0]:
+				PressHandler(button1, 0)
+			case clicked == 1 && !pressed[1]:
+				PressHandler(button2, 1)
+			case clicked == 2 && !pressed[2]:
+				PressHandler(button3, 2)
+			case clicked == 3 && !pressed[3]:
+				PressHandler(button4, 3)
+			case clicked == 4 && !pressed[4]:
+				PressHandler(button5, 4)
+			case clicked == 5 && !pressed[5]:
+				PressHandler(button6, 5)
+			case clicked == 6 && !pressed[6]:
+				PressHandler(button7, 6)
+			case clicked == 7 && !pressed[7]:
+				PressHandler(button8, 7)
+			case clicked == 8 && !pressed[8]:
+				PressHandler(button9, 8)
 			}
 
-			// Check if index is bigger or equal to 5, because it's the earliest time we can win. If index is 9, we have a tie and nobody won.
-			if index >= 5 {
+			fmt.Println(index)
+
+			// Check if index is bigger or equal to 4, because it's the earliest time we can win. If index is 8, we have a tie and nobody won.
+			if index >= 4 {
 				if CheckWon(player1) {
 					// Show a dialogue informing the first player that he won!
 					message := dialog.NewInformation("Player 1 has won!", "Congratulations to player 1 for winning.", window)
@@ -133,11 +153,10 @@ func InitGUI() {
 					message := dialog.NewInformation("Player 2 has won!", "Congratulations to player 2 for winning.", window)
 					message.Show()
 					break
-				} else if index == 9 {
-					// It is a tie if the game hasn't ended before index reaches 9.
+				} else if index == 8 {
+					// It is a tie if the game hasn't ended before index reaches 8 and no one wins on the ninth placement.
 					message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
 					message.Show()
-					break
 				}
 			}
 		}
@@ -157,9 +176,9 @@ func InitGUI() {
 }
 
 // PressHandler handles the press of a button and updates button icons and player arrays accordingly.
-func PressHandler(button *widget.Button, num, player uint8) uint8 {
+func PressHandler(button *widget.Button, num uint8) {
 	// Check if player one or two presses the button and handle accordingly.
-	if player%2 == 0 {
+	if index%2 == 0 {
 		button.SetIcon(circle)
 		player1[num] = true
 	} else {
@@ -169,9 +188,6 @@ func PressHandler(button *widget.Button, num, player uint8) uint8 {
 
 	// Set the button as pressed.
 	pressed[num] = true
-
-	// Need to have a return value so we wait for the function to complete fully before continuing. Thus we bump player index.
-	return player + 1
 }
 
 // CheckWon checks all possible combinations for winning.
