@@ -41,10 +41,7 @@ func InitGUI() {
 	// Create the window for our user interface.
 	window := app.NewWindow("Tic-Tac-Toe")
 
-	// Make a new vertical box where we can stack our horizontal grids.
-	vbox := widget.NewVBox()
-
-	// Define all variables we need for the buttons.
+	// Create all our buttons tiles for the game.
 	var (
 		button1 = widget.NewButton("", func() {
 			clicked[0] = true
@@ -75,8 +72,8 @@ func InitGUI() {
 		})
 	)
 
-	// Append a start button to our vertical box.
-	vbox.Append(widget.NewButton("Click to start", func() {
+	// Create our start button for the whole game.
+	startButton := widget.NewButton("Click to start", func() {
 		// Make sure that all buttons are reset before we start.
 		button1.SetIcon(nil)
 		button2.SetIcon(nil)
@@ -144,15 +141,13 @@ func InitGUI() {
 				}
 			}
 		}
-	}))
+	})
 
-	// Append each new row as a new container with grid layout and three buttons.
-	vbox.Append(fyne.NewContainerWithLayout(layout.NewGridLayout(3), button1, button2, button3))
-	vbox.Append(fyne.NewContainerWithLayout(layout.NewGridLayout(3), button4, button5, button6))
-	vbox.Append(fyne.NewContainerWithLayout(layout.NewGridLayout(3), button7, button8, button9))
+	// Add all the buttons in to a three column grid layout inside a container.
+	container := fyne.NewContainerWithLayout(layout.NewGridLayout(3), layout.NewSpacer(), startButton, layout.NewSpacer(), button1, button2, button3, button4, button5, button6, button7, button8, button9)
 
-	// Add our vertical box to be viewed.
-	window.SetContent(vbox)
+	// Set the conatiner as what is being displayed.
+	window.SetContent(container)
 
 	// Set a sane default for the window size.
 	window.Resize(fyne.NewSize(400, 100))
