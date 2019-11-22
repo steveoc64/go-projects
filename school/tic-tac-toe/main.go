@@ -17,6 +17,9 @@ var (
 	// Variable to handle if buttons are already pressed.
 	pressed = [9]bool{}
 
+	// Tell if we are in game or not.
+	inGame bool
+
 	// Index for defining if it's player one or player two's turn to play. Use 8bit variable to save on memory allocation.
 	index uint8
 )
@@ -37,52 +40,52 @@ func InitGUI() {
 	window := app.NewWindow("Tic-Tac-Toe")
 
 	// Set up a buffered channel for sending button presses.
-	channel := make(chan uint8, 9)
+	channel := make(chan uint8)
 
 	// Create all our buttons tiles for the game and send a button number to our channel on each press.
 	var (
 		button1 = widget.NewButton("", func() {
-			if !pressed[0] {
+			if !pressed[0] && inGame {
 				channel <- 0
 			}
 		})
 		button2 = widget.NewButton("", func() {
-			if !pressed[1] {
+			if !pressed[1] && inGame {
 				channel <- 1
 			}
 		})
 		button3 = widget.NewButton("", func() {
-			if !pressed[2] {
+			if !pressed[2] && inGame {
 				channel <- 2
 			}
 		})
 		button4 = widget.NewButton("", func() {
-			if !pressed[3] {
+			if !pressed[3] && inGame {
 				channel <- 3
 			}
 		})
 		button5 = widget.NewButton("", func() {
-			if !pressed[4] {
+			if !pressed[4] && inGame {
 				channel <- 4
 			}
 		})
 		button6 = widget.NewButton("", func() {
-			if !pressed[5] {
+			if !pressed[5] && inGame {
 				channel <- 5
 			}
 		})
 		button7 = widget.NewButton("", func() {
-			if !pressed[6] {
+			if !pressed[6] && inGame {
 				channel <- 6
 			}
 		})
 		button8 = widget.NewButton("", func() {
-			if !pressed[7] {
+			if !pressed[7] && inGame {
 				channel <- 7
 			}
 		})
 		button9 = widget.NewButton("", func() {
-			if !pressed[8] {
+			if !pressed[8] && inGame {
 				channel <- 8
 			}
 		})
@@ -90,7 +93,7 @@ func InitGUI() {
 
 	// Create our start button for the whole game.
 	startButton := widget.NewButton("Click to start", func() {
-		// Make sure that all buttons are reset before we start.
+		// Make sure that all buttons are reset to remove icons before we start.
 		button1.SetIcon(nil)
 		button2.SetIcon(nil)
 		button3.SetIcon(nil)
@@ -101,10 +104,8 @@ func InitGUI() {
 		button8.SetIcon(nil)
 		button9.SetIcon(nil)
 
-		// Clear the board information for each player, each button click and all buttons that have already been pressed.
-		player1 = [9]bool{false, false, false, false, false, false, false, false, false}
-		player2 = [9]bool{false, false, false, false, false, false, false, false, false}
-		pressed = [9]bool{false, false, false, false, false, false, false, false, false}
+		// Tell the rest of the program that we are in a game.
+		inGame = true
 
 		// The main loop for the game.
 		for index = 0; index < 9; index++ {
@@ -114,23 +115,23 @@ func InitGUI() {
 
 			// Handles all our button presses during the play time.
 			switch {
-			case clicked == 0 && !pressed[0]:
+			case clicked == 0:
 				PressHandler(button1, 0)
-			case clicked == 1 && !pressed[1]:
+			case clicked == 1:
 				PressHandler(button2, 1)
-			case clicked == 2 && !pressed[2]:
+			case clicked == 2:
 				PressHandler(button3, 2)
-			case clicked == 3 && !pressed[3]:
+			case clicked == 3:
 				PressHandler(button4, 3)
-			case clicked == 4 && !pressed[4]:
+			case clicked == 4:
 				PressHandler(button5, 4)
-			case clicked == 5 && !pressed[5]:
+			case clicked == 5:
 				PressHandler(button6, 5)
-			case clicked == 6 && !pressed[6]:
+			case clicked == 6:
 				PressHandler(button7, 6)
-			case clicked == 7 && !pressed[7]:
+			case clicked == 7:
 				PressHandler(button8, 7)
-			case clicked == 8 && !pressed[8]:
+			case clicked == 8:
 				PressHandler(button9, 8)
 			}
 
@@ -150,9 +151,22 @@ func InitGUI() {
 					// It is a tie if the game hasn't ended before index reaches 8 and no one wins on the ninth placement.
 					message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
 					message.Show()
+
 				}
 			}
 		}
+
+		// We are not in a game anymore.
+		inGame = false
+
+		// Clean up after our game finishes and do it on an other goroutine to speed it up.
+		go func() {
+			// As a clean up we make sure to clear all markers for each player and for all pressed buttons.
+			player1 = [9]bool{false, false, false, false, false, false, false, false, false}
+			player2 = [9]bool{false, false, false, false, false, false, false, false, false}
+			pressed = [9]bool{false, false, false, false, false, false, false, false, false}
+		}()
+
 	})
 
 	// Add all the buttons in to a three column grid layout inside a container.
@@ -170,7 +184,7 @@ func InitGUI() {
 
 // PressHandler handles the press of a button and updates button icons and player arrays accordingly.
 func PressHandler(button *widget.Button, num uint8) {
-	// Check if player one or two presses the button and handle accordingly.
+	// Check if player one or two presses the button and handle it accordingly.
 	if index%2 == 0 {
 		button.SetIcon(circle)
 		player1[num] = true
@@ -179,7 +193,7 @@ func PressHandler(button *widget.Button, num uint8) {
 		player2[num] = true
 	}
 
-	// Set the button as pressed.
+	// Set the button as pressed to not make it pressable again.
 	pressed[num] = true
 }
 
