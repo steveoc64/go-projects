@@ -11,11 +11,11 @@ import (
 // Define all our global variables. We use these in order to not redeclare them every time we start the game.
 var (
 	// Variables for which parts the players own. Index 0 is the first tile and index 8 is the ninth tile.
-	player1 = [9]bool{}
-	player2 = [9]bool{}
+	player1 [9]bool
+	player2 [9]bool
 
 	// Variable to handle if buttons are already pressed.
-	pressed = [9]bool{}
+	pressed [9]bool
 
 	// Tell if we are in game or not.
 	inGame bool
@@ -107,6 +107,8 @@ func InitGUI() {
 		// Tell the rest of the program that we are in a game.
 		inGame = true
 
+		var message dialog.Dialog
+
 		// The main loop for the game.
 		for index = 0; index < 9; index++ {
 
@@ -114,24 +116,24 @@ func InitGUI() {
 			clicked := <-channel
 
 			// Handles all our button presses during the play time.
-			switch {
-			case clicked == 0:
+			switch clicked {
+			case 0:
 				PressHandler(button1, 0)
-			case clicked == 1:
+			case 1:
 				PressHandler(button2, 1)
-			case clicked == 2:
+			case 2:
 				PressHandler(button3, 2)
-			case clicked == 3:
+			case 3:
 				PressHandler(button4, 3)
-			case clicked == 4:
+			case 4:
 				PressHandler(button5, 4)
-			case clicked == 5:
+			case 5:
 				PressHandler(button6, 5)
-			case clicked == 6:
+			case 6:
 				PressHandler(button7, 6)
-			case clicked == 7:
+			case 7:
 				PressHandler(button8, 7)
-			case clicked == 8:
+			case 8:
 				PressHandler(button9, 8)
 			}
 
@@ -139,33 +141,32 @@ func InitGUI() {
 			if index >= 4 {
 				if CheckWon(player1) {
 					// Show a dialogue informing the first player that he won!
-					message := dialog.NewInformation("Player 1 has won!", "Congratulations to player 1 for winning.", window)
-					message.Show()
+					message = dialog.NewInformation("Player 1 has won!", "Congratulations to player 1 for winning.", window)
 					break
 				} else if CheckWon(player2) {
 					// Show a dialogue informing the second player that he won!
-					message := dialog.NewInformation("Player 2 has won!", "Congratulations to player 2 for winning.", window)
-					message.Show()
+					message = dialog.NewInformation("Player 2 has won!", "Congratulations to player 2 for winning.", window)
 					break
 				} else if index == 8 {
 					// It is a tie if the game hasn't ended before index reaches 8 and no one wins on the ninth placement.
-					message := dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
-					message.Show()
-
+					message = dialog.NewInformation("It is a tie!", "Nobody has won. Please try better next time.", window)
 				}
 			}
 		}
 
-		// We are not in a game anymore.
-		inGame = false
-
 		// Clean up after our game finishes and do it on an other goroutine to speed it up.
 		go func() {
+			// We are not in a game anymore.
+			inGame = false
+
 			// As a clean up we make sure to clear all markers for each player and for all pressed buttons.
 			player1 = [9]bool{false, false, false, false, false, false, false, false, false}
 			player2 = [9]bool{false, false, false, false, false, false, false, false, false}
 			pressed = [9]bool{false, false, false, false, false, false, false, false, false}
 		}()
+
+		// Show our winning or tie message to the user.
+		message.Show()
 
 	})
 
