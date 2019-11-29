@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-var pwd, url, path string
+var url, path string
 
 func init() {
   // Get the present working directory.
@@ -63,7 +63,7 @@ func download(url string, outpath string) {
 func create(outpath string, path string) (out *os.File) {
 
 	// Add the filename in the url if we don't specify a path, or if the path doesn't contain a filename.
-	if path == pwd || match("*/", path){
+	if match("*/", path) || !match("*.*", path) {
 		// Join the present working directory with the filename at the end of the url.
 		outpath = filepath.Join(path, filepath.Base(url))
 	}
