@@ -153,22 +153,63 @@ func (c *Column) RequiredImin(safety float64) float64 {
 	return (safety * (math.Pow(c.BucklingLength, 2) * c.ColumnForce)) / (math.Pow(math.Pi, 2) * c.ElasticModulus)
 }
 
+// PrintBuckling prints to the terminal to inform if a column breaks from buckling or if it doesn't. It also prints it's safety factor.
+func (c *Column) PrintBuckling() {
+	breaks, err := c.Buckling()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	if !breaks {
+		fmt.Printf("Stången har en säkerhetsfaktor på %v och kommer därför inte knäckas.\n\n", c.BucklingSafety)
+	} else {
+		fmt.Printf("Stången har en säkerhetsfaktor på %v och kommer därför knäckas!\n\n", c.BucklingSafety)
+	}
+
+}
+
+func (c *Column) PrintRequiredImin(safety float64) {
+	required := c.RequiredImin(safety)
+
+	fmt.Printf("Nuvarande Imin är %v och det Imin som krävs för en säkerhet på %v är: %v!\n\n", c.Imin, safety, required)
+}
+
 func main() {
-	horizontal := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 2400, EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularPipe: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 10000}
-	sideways := &Column{YieldStrength: 275, ElasticModulus: 105000, Length: 1200 / math.Cos(DegToRad(45)), EulerCase: Fastening{Second: true}, ColumnType: Type{RectangularPipe: true}, CrossSection: CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6}, ColumnForce: 5 * math.Sqrt2 * 1000}
 
-	first, err := horizontal.Buckling()
-	if err != nil {
-		fmt.Println(err)
+	horizontal := &Column{
+		YieldStrength:  275,
+		ElasticModulus: 105000,
+		Length:         2400 / 2,
+		EulerCase:      Fastening{Second: true},
+		ColumnType:     Type{RectangularPipe: true},
+		CrossSection:   CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6},
+		ColumnForce:    10000}
+
+	sideways := &Column{
+		YieldStrength:  275,
+		ElasticModulus: 105000,
+		Length:         1200 / math.Cos(DegToRad(45)),
+		EulerCase:      Fastening{Second: true},
+		ColumnType:     Type{RectangularPipe: true},
+		CrossSection:   CrossSection{RectSideShort: 30, RectSideLong: 50, RectWallThickness: 2.6},
+		ColumnForce:    5 * math.Sqrt2 * 1000}
+
+	sideways2 := &Column{
+		YieldStrength:  275,
+		ElasticModulus: 105000,
+		Length:         1200 / math.Cos(DegToRad(45)),
+		Area:           301,
+		Imin:           3.5 * math.Pow(10, 4),
+		ColumnForce:    5 * math.Sqrt2 * 1000,
 	}
 
-	second, _ := sideways.Buckling()
-	if err != nil {
-		fmt.Println(err)
-	}
+	horizontal.PrintBuckling()
+	sideways.PrintBuckling()
+	sideways2.PrintBuckling()
 
-	fmt.Println("Den raka stången i mitten kommer knäckas:", first, "\nMed en säkerhet på:", horizontal.BucklingSafety)
-	fmt.Println("\nDen vinklade stången på sidan kommer knäckas:", second, "\nMed en säkerhet på:", sideways.BucklingSafety)
-
-	fmt.Printf("\nImin som krävs för en säkerhet på %v: %v\nNuvarande Imin: %v\n", 2, horizontal.RequiredImin(2), horizontal.Imin)
+	horizontal.PrintRequiredImin(2)
+	sideways.PrintRequiredImin(2)
+	sideways2.PrintRequiredImin(3)
+	sideways2.PrintRequiredImin(4)
 }
