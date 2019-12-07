@@ -5,40 +5,38 @@ import (
 	"log"
 )
 
-func betygsPoäng(bokstav string) (poäng float64) {
+func betyg(bokstav string) (nummer float64) {
 
 	switch bokstav {
 	case "A":
-		poäng = 20
+		nummer = 20
 	case "B":
-		poäng = 17.5
+		nummer = 17.5
 	case "C":
-		poäng = 15
+		nummer = 15
 	case "D":
-		poäng = 12.5
+		nummer = 12.5
 	case "E":
-		poäng = 10
+		nummer = 10
 	case "F":
-		poäng = 0
+		nummer = 0
 	default:
 		log.Fatalln("Inte ett giltigt betyg!")
 	}
 
-	return poäng
+	return nummer
 }
 
-func merit(betyg int, extra float64) (merit float64) {
+func merit(antal int, extra float64) (merit float64) {
 	fmt.Println("Skriv in ett betyg per rad:")
-
-	var summa float64
 	var bokstav string
 
-	for i := 1; i <= betyg; i++ {
+	for i := 1; i <= antal; i++ {
 		fmt.Scanln(&bokstav)
-		summa = summa + betygsPoäng(bokstav)
+		merit += betyg(bokstav)
 	}
 
-	merit = (summa / float64(betyg)) + extra
+	merit = (merit / float64(antal)) + extra
 
 	return merit
 }
