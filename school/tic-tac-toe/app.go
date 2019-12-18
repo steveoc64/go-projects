@@ -56,7 +56,7 @@ func NewGame(app fyne.App) *Game {
 	// Set the conatiner as what is being displayed.
 	g.w.SetContent(g.container)
 	// Set a sane default for the window size.
-	g.w.Resize(fyne.NewSize(400, 250))
+	g.w.Resize(fyne.NewSize(400, 400))
 	return g
 }
 
@@ -129,6 +129,7 @@ func (a *Game) Check() {
 
 // End the game
 func (g *Game) End(d dialog.Dialog) {
+	d.Show()
 	// Clean up after our game finishes and do it on an other goroutine to speed it up.
 	g.inGame = false
 	for i := 0; i < 9; i++ {
@@ -136,7 +137,6 @@ func (g *Game) End(d dialog.Dialog) {
 		g.player2[i] = false
 		g.pressed[i] = false
 	}
-	d.Show()
 	g.Start()
 }
 
